@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import NavBar from "@/components/navbar";
+import { Navbar } from "@/components/navbar";
 import "./globals.css";
 
+// import { HamburgerClicked } from "@/util/context";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,9 +17,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={"bg-gray-100 text-gray-900 font-sans"}
+        className={"text-gray-900 font-sans"}
       >
-        <NavBar />
+
+        <Navbar />
         <div className="p-4">
           {children}
         </div>
