@@ -63,16 +63,16 @@ function Navbar() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0111 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 01-1.969 5.617zm-2.006-.742A6.977 6.977 0 0018 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 004.875-1.975l.15-.15z" />
                         </svg>
                     </Link>
-                    <li className="hidden md:flex mx-2 py-2 px-4 whitespace-nowrap hover:underline bg-[rgba(245,245,245)] hover:text-[rgba(47,58,178)] hover:bg-[rgba(59,73,223)]/25 rounded-lg">
-                        <Link href="/login" className="font-medium">
+                    <Link href="/login" className="font-medium">
+                        <li className="hidden md:flex mx-2 py-2 px-4 whitespace-nowrap hover:underline bg-[rgba(245,245,245)] hover:text-[rgba(47,58,178)] hover:bg-[rgba(59,73,223)]/25 rounded-lg">
                             Log in
-                        </Link>
-                    </li>
-                    <li className="mx-2 py-2 px-4 whitespace-nowrap border-solid text-[rgba(47,58,178)] hover:underline hover:!text-white hover:bg-[rgba(47,58,178)] border-[rgba(47,58,178)] border-[1px] rounded-lg font-medium">
-                        <Link href="/signup" className="font-medium">
+                        </li>
+                    </Link>
+                    <Link href="/signup" className="font-medium">
+                        <li className="mx-2 py-2 px-4 whitespace-nowrap border-solid text-[rgba(47,58,178)] hover:underline hover:!text-white hover:bg-[rgba(47,58,178)] border-[rgba(47,58,178)] border-[1px] rounded-lg font-medium">
                             Create account
-                        </Link>
-                    </li>
+                        </li>
+                    </Link>
                 </ul>
 
             </nav>
