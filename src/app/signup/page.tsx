@@ -1,13 +1,20 @@
+"use client";
 import React from 'react';
 import DevIcon from "/public/icon.png";
 import Image from 'next/image';
 import Link from 'next/link';
+import { signIn, useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
 export default function Signup() {
+    const { data: session } = useSession();
+    if (session) {
+        redirect("/");
+    }
     return <div className="max-w-[640px] px-4 mx-auto flex flex-col items-center mt-12">
         <Image src={DevIcon} alt={""} height={0} width={0} className='w-auto h-12'></Image>
         <div className="text-2xl md:text-3xl font-bold mt-4">Join the DEV Community</div>
         <p className='mt-1 text-base font-light mb-6'>DEV Community is a community of 2,165,578 amazing developers</p>
-        <button className='flex flex-row p-3 border-solid border-[1px] border-black/50 w-full text-sm rounded-lg items-center'>
+        <button onClick={() => signIn('google')} className='flex flex-row p-3 border-solid border-[1px] border-black/50 w-full text-sm rounded-lg items-center'>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" role="img" aria-hidden="true" className="crayons-icon crayons-icon--default">
                 <path d="M18.09 18.75c2.115-1.973 3.052-5.25 2.49-8.393h-8.392v3.473h4.777a3.945 3.945 0 0 1-1.777 2.67l2.902 2.25Z" fill="#4285F4"></path>
                 <path d="M4.215 15.982A9 9 0 0 0 18.09 18.75l-2.902-2.25a5.37 5.37 0 0 1-8.018-2.813l-2.955 2.296Z" fill="#34A853"></path>

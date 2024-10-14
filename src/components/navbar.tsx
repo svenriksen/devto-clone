@@ -3,7 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import Icon from "/public/icon.png";
 // import SearchIcon from "/public/search.svg";
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
+import { useSession } from "next-auth/react";
 
 
 
@@ -12,6 +13,8 @@ export { Navbar };
 function Navbar() {
 
     const [clicked, setClicked] = useState(false);
+    const [profileClickedState, setProfileClickedState] = useState(false);
+    const { data: session } = useSession();
 
     function handleHamburger() {
 
@@ -24,8 +27,12 @@ function Navbar() {
         console.log(data.get("query"));
     }
 
+    function profileClicked() {
+        setProfileClickedState(!profileClickedState);
+    }
+
     return (
-        <header className="fixed-top-0 left-0 right-0 z-[100] bg-white shadow-sm">
+        <header className="fixed-top-0 left-0 right-0 bg-white shadow-sm z-20 relative">
             <nav className="flex items-center justify-between p-4 h-14 m-auto max-w-[1380px]">
                 <div className="flex flex-row flex-1 max-w-[680px]">
 
@@ -56,26 +63,86 @@ function Navbar() {
                     </form>
 
                 </div>
+                {session ? <div className="">
+                    <ul className="flex flex-row items-center">
+                        <Link href={"/search"} className="md:hidden p-2 inline-block hover:text-[rgba(47,58,178)] hover:bg-[rgba(59,73,223,0.1)] rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="a1vjn6flmyx96gwpwe9bigfhx323vwlh" className="crayons-icon"><title id="a1vjn6flmyx96gwpwe9bigfhx323vwlh">Search</title>
+                                <path d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0111 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 01-1.969 5.617zm-2.006-.742A6.977 6.977 0 0018 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 004.875-1.975l.15-.15z"></path>
+                            </svg>
+                        </Link>
+                        <Link href="/notifications" className="mx-1 inline-block p-2 hover:text-[rgba(47,58,178)] hover:bg-[rgba(59,73,223,0.1)] rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="a9pv4vm1pbo34da7o51vet751dp05zkq" className="crayons-icon"><title id="a9pv4vm1pbo34da7o51vet751dp05zkq">Notifications</title>
+                                <path d="M20 17h2v2H2v-2h2v-7a8 8 0 1116 0v7zm-2 0v-7a6 6 0 10-12 0v7h12zm-9 4h6v2H9v-2z"></path>
+                            </svg>
+                        </Link>
+                        <Link href="/new" className="hidden md:inline-block font-medium">
+                            <li className="mx-2 py-2 px-4 whitespace-nowrap border-solid text-[rgba(47,58,178)] hover:underline hover:!text-white hover:bg-[rgba(47,58,178)] border-[rgba(47,58,178)] border-[1px] rounded-lg font-medium">
+                                Create Post
+                            </li>
+                        </Link>
+                        <div className="mx-1 hover:bg-black/25 rounded-full">
+                            <button onClick={profileClicked} className="flex items-center p-1">
+                                <Image src={session.user.image!} alt="" width={1000} height={1000} className="w-8 h-8 rounded-full object-contain"></Image>
+                            </button>
+                        </div>
+                    </ul>
 
-                <ul className="flex flex-row items-center">
-                    <Link href={"/search"} className="md:hidden mx-1 bg-[rgb(245,245,245)]">
-                        <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0111 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 01-1.969 5.617zm-2.006-.742A6.977 6.977 0 0018 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 004.875-1.975l.15-.15z" />
-                        </svg>
-                    </Link>
-                    <Link href="/login" className="font-medium">
-                        <li className="hidden md:flex mx-2 py-2 px-4 whitespace-nowrap hover:underline bg-[rgba(245,245,245)] hover:text-[rgba(47,58,178)] hover:bg-[rgba(59,73,223)]/25 rounded-lg">
-                            Log in
-                        </li>
-                    </Link>
-                    <Link href="/signup" className="font-medium">
-                        <li className="mx-2 py-2 px-4 whitespace-nowrap border-solid text-[rgba(47,58,178)] hover:underline hover:!text-white hover:bg-[rgba(47,58,178)] border-[rgba(47,58,178)] border-[1px] rounded-lg font-medium">
-                            Create account
-                        </li>
-                    </Link>
-                </ul>
+                    <ul className={(profileClickedState ? "inline-block opacity-100" : "hidden opacity-0 pre-click") + " absolute bg-white w-[98vw] min-w-[250px] md:max-w-[360px] md:w-max transition-profile left-2 md:left-auto md:right-2 top-full p-2 mt-1 z-[400]"}>
 
+                        <li className="w-full pb-2 mb-2 border-b-[1px] border-solid border-black/20">
+                            <Link href={"/" + session.user.id} className="rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
+
+                                <p className="text-inherit block font-medium leading-tight">{session.user.name}</p>
+                                <span className="text-inherit text-sm opacity-75">{"@" + session.user.id}</span>
+
+                            </Link>
+                        </li>
+                        <li className="w-full leading-tight">
+                            <Link href={"/dashboard"} className="w-full rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
+                                Dashboard
+                            </Link>
+                        </li>
+                        <li className="w-full leading-tight">
+                            <Link href={"/new"} className="w-full rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
+                                Create Post
+                            </Link>
+                        </li>
+                        <li className="w-full leading-tight">
+                            <Link href={"/dashboard"} className="w-full rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
+                                Reading List
+                            </Link>
+                        </li>
+                        <li className="w-full pb-2 leading-tight border-b-[1px] border-solid border-black/20">
+                            <Link href={"/dashboard"} className="w-full rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
+                                Settings
+                            </Link>
+                        </li>
+                        <li className="w-full pt-2 leading-tight">
+                            <Link href={"/signout_confirm"} className="w-full rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
+                                Sign out
+                            </Link>
+                        </li>
+                    </ul>
+                </div> :
+                    <ul className="flex flex-row items-center">
+                        <Link href={"/search"} className="md:hidden p-2 inline-block hover:text-[rgba(47,58,178)] hover:bg-[rgba(59,73,223,0.1)] rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="a1vjn6flmyx96gwpwe9bigfhx323vwlh" className="crayons-icon"><title id="a1vjn6flmyx96gwpwe9bigfhx323vwlh">Search</title>
+                                <path d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0111 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 01-1.969 5.617zm-2.006-.742A6.977 6.977 0 0018 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 004.875-1.975l.15-.15z"></path>
+                            </svg>
+                        </Link>
+                        <Link href="/login" className="font-medium">
+                            <li className="hidden md:flex mx-2 py-2 px-4 whitespace-nowrap hover:underline bg-[rgba(245,245,245)] hover:text-[rgba(47,58,178)] hover:bg-[rgba(59,73,223)]/25 rounded-lg">
+                                Log in
+                            </li>
+                        </Link>
+                        <Link href="/signup" className="font-medium">
+                            <li className="mx-2 py-2 px-4 whitespace-nowrap border-solid text-[rgba(47,58,178)] hover:underline hover:!text-white hover:bg-[rgba(47,58,178)] border-[rgba(47,58,178)] border-[1px] rounded-lg font-medium">
+                                Create account
+                            </li>
+                        </Link>
+                    </ul>
+                }
             </nav>
-        </header>
+        </header >
     );
 }

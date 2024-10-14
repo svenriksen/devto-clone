@@ -5,9 +5,10 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import { type Adapter } from "next-auth/adapters";
-import DiscordProvider from "next-auth/providers/discord";
+import GoogleProvider from "next-auth/providers/google";
+import { User, Profile, Account } from "next-auth";
 
-import { env } from "@/env";
+
 import { db } from "@/server/db";
 
 /**
@@ -44,14 +45,27 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: user.id,
       },
+
+
     }),
+    async signIn({ user, account, profile }) {
+      // Example of custom signIn logic
+      console.log("signIn", { user, account, profile });
+      // Return false to display a default error message
+      return true;
+    },
   },
   adapter: PrismaAdapter(db) as Adapter,
+  pages: {
+    signIn: "/login",
+    newUser: "/signup",
+  },
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
+
     /**
      * ...add more providers here.
      *

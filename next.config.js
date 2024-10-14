@@ -5,6 +5,18 @@
 await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+    images: {
+        // domains: ['lh3.googleusercontent.com'],
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'lh3.googleusercontent.com',
+                port: '',
+                pathname: '/**',
+            },
+        ],
+    },
+};
 
 export default config;
