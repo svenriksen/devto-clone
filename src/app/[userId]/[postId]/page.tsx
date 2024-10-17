@@ -1,4 +1,5 @@
 "use client";
+import { navigate } from "@/app/actions";
 import { api } from "@/trpc/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -6,6 +7,7 @@ import Link from "next/link";
 export default function Post({ params }: { params: { userId: string, postId: string } }) {
     const post = api.post.getPostById.useQuery({ id: params.postId });
     const user = api.profile.getProfile.useQuery(post.data?.createdById ?? "", { enabled: !!post.data?.createdById }).data;
+    const temp = api.post.deletePosts.useMutation();
     return (
 
         <>
@@ -38,15 +40,25 @@ export default function Post({ params }: { params: { userId: string, postId: str
                     </div>
                 </aside>
                 <div className="bg-white rounded-lg pb-8">
-                    <Image alt="" src={post.data?.coverImage ?? ""} width={2000} height={2000} />
+                    {(post.data?.coverImage !== null && post.data?.coverImage.replace("data:application/octet-stream;base64,", "").trim() !== "") ? <Image alt="" src={post.data?.coverImage ?? ""} width={2000} height={2000} />
+                        : null}
                     <div className="pt-8 px-12 relative md:px-16">
 
                         <Link href={`${user?.id}`} className="py-3 relative">
                             <div className="absolute w-8 h-8 -left-10 top-0 rounded-full">
                                 <Image alt="" src={user?.image ?? ""} width={1000} height={1000} className="w-full h-auto rounded-full" />
                             </div>
-                            <div className="font-medium text-base">{user?.name}</div>
-                            <div className="text-xs text-[rgb(82,82,82)] mb-5">{post.data?.createdAt.toUTCString()}</div>
+                            <div className="flex items-start justify-between">
+                                <div>
+                                    <div className="font-medium text-base">{user?.name}</div>
+                                    <div className="text-xs text-[rgb(82,82,82)] mb-5">{post.data?.createdAt.toUTCString()}</div>
+                                </div>
+                                <button onClick={(event) => {
+                                    event.preventDefault();
+                                    temp.mutate({ id: post.data?.id ?? "" });
+                                    navigate("/").catch(console.error);
+                                }} className="px-2 py-2 border-[1px] border-solid border-red-500 rounded-lg text-red-500 hover:bg-red-300">Delete</button>
+                            </div>
                         </Link>
 
                         <h1 className="text-4xl lg:text-5xl font-bold mb-2 leading-tight">{post.data?.title}</h1>

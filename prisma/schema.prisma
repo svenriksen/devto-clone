@@ -49,12 +49,10 @@ model Reaction {
     id        Int      @id @default(autoincrement())
     type      String
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-
-    createdBy   User   @relation(fields: [createdById], references: [id])
-    createdById String
+    createdBy   User   @relation(fields: [createdById], references: [id]) 
+    createdById String @unique
     Post        Post   @relation(fields: [postId], references: [id])
-    postId      String
+    postId      String @unique
 }
 
 model LikeComment {

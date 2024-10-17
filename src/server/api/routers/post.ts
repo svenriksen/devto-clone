@@ -57,4 +57,47 @@ export const postRouter = createTRPCRouter({
   getAllPosts: publicProcedure.query(async ({ ctx }) => {
     return await ctx.db.post.findMany();
   }),
+
+  deletePosts: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+    return await ctx.db.post.delete({ where: { id: input.id } });
+  }),
+
+  getPostCommentsCount: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    return await ctx.db.comment.count({ where: { postId: input.id } });
+  }),
+
+  getPostReactionCount: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    return await ctx.db.reaction.count({ where: { postId: input.id } });
+  }),
+
+  reactToPost: protectedProcedure.input(z.object({ id: z.string(), reaction: z.string() })).mutation(async ({ ctx, input }) => {
+    return await ctx.db.reaction.create({
+      data: {
+        postId: input.id,
+        type: input.reaction,
+        createdById: ctx.session.user.id,
+      },
+    });
+  }),
+
+  getPostReactions: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    return await ctx.db.reaction.findMany({ where: { postId: input.id } });
+  }),
+
+  getPostComments: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    return await ctx.db.comment.findMany({ where: { postId: input.id } });
+  }),
+
+  createComment: protectedProcedure.input(z.object({ postId: z.string(), content: z.string() })).mutation(async ({ ctx, input }) => {
+    return await ctx.db.comment.create({
+      data: {
+        content: input.content,
+        postId: input.postId,
+        createdById: ctx.session.user.id,
+        createdAt: new Date(),
+      },
+    });
+  }),
+
+
 });
