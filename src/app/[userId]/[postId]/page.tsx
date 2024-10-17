@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function Post({ params }: { params: { userId: string, postId: string } }) {
     const post = api.post.getPostById.useQuery({ id: params.postId });
-    const user = api.profile.getProfile.useQuery(post.data?.createdById || "", { enabled: !!post.data?.createdById }).data;
+    const user = api.profile.getProfile.useQuery(post.data?.createdById ?? "", { enabled: !!post.data?.createdById }).data;
     return (
 
         <>
@@ -39,12 +39,12 @@ export default function Post({ params }: { params: { userId: string, postId: str
                     </div>
                 </aside>
                 <div className="bg-white rounded-lg pb-8">
-                    <Image alt="" src={post.data?.coverImage || ""} width={2000} height={2000} />
+                    <Image alt="" src={post.data?.coverImage ?? ""} width={2000} height={2000} />
                     <div className="pt-8 px-12 relative md:px-16">
 
                         <Link href={`${user?.id}`} className="py-3 relative">
                             <div className="absolute w-8 h-8 -left-10 top-0 rounded-full">
-                                <Image alt="" src={user?.image || ""} width={1000} height={1000} className="w-full h-auto rounded-full" />
+                                <Image alt="" src={user?.image ?? ""} width={1000} height={1000} className="w-full h-auto rounded-full" />
                             </div>
                             <div className="font-medium text-base">{user?.name}</div>
                             <div className="text-xs text-[rgb(82,82,82)] mb-5">{post.data?.createdAt.toUTCString()}</div>
@@ -61,7 +61,7 @@ export default function Post({ params }: { params: { userId: string, postId: str
                         </div>
                     </div>
                     <div className="pt-8 px-12 relative md:px-16">
-                        <div dangerouslySetInnerHTML={{ __html: post.data?.content || "" }} style={{ all: "initial" }} className="prose">
+                        <div dangerouslySetInnerHTML={{ __html: post.data?.content ?? "" }} style={{ all: "initial" }} className="prose">
 
                         </div>
                     </div>
@@ -72,7 +72,7 @@ export default function Post({ params }: { params: { userId: string, postId: str
                             <div className="mt-2 bg-white">
                                 <div className="relative px-4 -mt-4">
                                     <div className="flex items-end">
-                                        <Image alt="" src={user?.image || ""} width={1000} height={1000} className="-top-10 mb-2 mr-3 w-10 h-auto rounded-lg" />
+                                        <Image alt="" src={user?.image ?? ""} width={1000} height={1000} className="-top-10 mb-2 mr-3 w-10 h-auto rounded-lg" />
                                         <h1 className="mb-2 font-bold text-lg">{user?.name}</h1>
                                     </div>
                                 </div>
