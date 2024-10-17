@@ -23,7 +23,7 @@ const Tiptap = ({ onchange,
         mkdwn: string,
         setMkdwn: React.Dispatch<React.SetStateAction<string>>
     }) => {
-    const editor: unknown = useEditor({
+    const editor = useEditor({
         enableInputRules: false,
         immediatelyRender: false,
         extensions: [
