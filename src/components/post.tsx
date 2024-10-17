@@ -59,7 +59,7 @@ export default function Post({
                 </div>
                 <div className="pb-4">
                     {post.tags.map((tag, index) => {
-                        return <Link href={"/"} className="text-sm btn !px-2 !py-1 border-[1px] border-transparent !bg-white hover:!bg-[rgba(59,73,223)]/25 hover:border-[rgba(59,73,223)] hover:border-[1px] hover:border-solid transition duration-300">
+                        return <Link href={"/"} key={index} className="text-sm btn !px-2 !py-1 border-[1px] border-transparent !bg-white hover:!bg-[rgba(59,73,223)]/25 hover:border-[rgba(59,73,223)] hover:border-[1px] hover:border-solid transition duration-300">
                             <span className="text-[rgba(59,73,223)]">#</span>{tag}
                         </Link>
                     })}

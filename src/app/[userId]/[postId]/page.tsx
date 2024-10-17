@@ -1,7 +1,6 @@
 "use client";
 import { api } from "@/trpc/react";
 import Image from "next/image";
-import { navigate } from "@/app/actions";
 import Link from "next/link";
 
 export default function Post({ params }: { params: { userId: string, postId: string } }) {
@@ -54,7 +53,7 @@ export default function Post({ params }: { params: { userId: string, postId: str
 
                         <div className="pb-4">
                             {post.data?.tags.map((tag, index) => {
-                                return <Link href={"/"} className="text-sm btn !px-2 !py-1 mr-2 border-[1px] border-transparent !bg-white hover:!bg-[rgba(59,73,223)]/25 hover:border-[rgba(59,73,223)] hover:border-[1px] hover:border-solid transition duration-300">
+                                return <Link href={"/"} key={index} className="text-sm btn !px-2 !py-1 mr-2 border-[1px] border-transparent !bg-white hover:!bg-[rgba(59,73,223)]/25 hover:border-[rgba(59,73,223)] hover:border-[1px] hover:border-solid transition duration-300">
                                     <span className="text-[rgba(59,73,223)]">#</span>{tag}
                                 </Link>
                             })}

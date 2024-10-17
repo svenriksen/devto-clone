@@ -1,4 +1,5 @@
 'use client';
+/*eslint-disable @typescript-eslint/non-nullable-type-assertion-style*/
 import React, { Suspense, useEffect } from "react";
 import { api } from "@/trpc/react";
 import { navigate } from "../actions";
@@ -76,8 +77,8 @@ export default function Profile({ params }: { params: { userId: string } }) {
                     </div>
                     {posts ?
                         <div className="flex flex-col">
-                            {posts.map((post) => {
-                                return <div className="mb-4">
+                            {posts.map((post, index) => {
+                                return <div key={index} className="mb-4">
                                     <Post post={post} user={{
                                         name: userId.data?.name as string,
                                         image: userId.data?.image as string,

@@ -47,7 +47,7 @@ export default function Home() {
             // if (user.data === null) {
             //   return null;
             // }
-            return <Post post={post} user={null} />;
+            return <Post key={index} post={post} user={null} />;
           })}
         </div>
       </div >
