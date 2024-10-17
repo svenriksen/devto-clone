@@ -31,11 +31,17 @@ export default function CreatePost() {
         setIsActive(active);
     }
 
+    function handleTagsKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+        // event.preventDefault();
+        if (event.key == "Enter") {
+            handleTags(event as any);
+        }
+    }
 
     function handleTags(event: React.ChangeEvent<HTMLInputElement>) {
         event.preventDefault();
-        console.log(event.target.value);
-        if (event.target.value.length > 0 && currentSize < 4) {
+        console.log(event.target.value, currentSize, tags.length, tags);
+        if (event.target.value.length > 0 && tags.length < 4) {
 
             if (tags.includes(event.target.value)) {
                 return;
@@ -48,22 +54,23 @@ export default function CreatePost() {
                 <div class="flex items-center mr-1">
                     <button onclick="event.preventDefault()" class="bg-[rgba(59,73,223,0.1)] px-2 py-1 " style="border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem;"># ${event.target.value}</button>
                     <button class="!p-1 !bg-[rgba(59,73,223,0.1)]" style="border-top-right-radius: 0.5rem; border-bottom-right-radius: 0.5rem;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="crayons-icon"><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636l4.95 4.95z"></path></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="crayons-icon"><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636l4.95 4.95z"></path></svg>
                     </button>
                 </div>
                 `;
             li.addEventListener("click", function (this: typeof li, eventLi) {
                 eventLi.preventDefault();
                 if (this.parentNode != null) {
-                    this.parentNode.removeChild(this);
+                    setTags(tags => tags.filter((tag) => tag != this.textContent?.trim().replace("# ", "")));
+                    console.log("new tags", tags);
                     setCurrentSize(currentSize - 1);
-                    setTags(tags.filter((tag) => tag != event.target.value));
+                    this.parentNode.removeChild(this);
                 }
             });
             if (ul != null) {
                 ul.appendChild(li);
-                setCurrentSize(currentSize + 1);
                 setTags([...tags, event.target.value]);
+                setCurrentSize(currentSize + 1);
                 event.target.value = "";
             }
         }
@@ -123,7 +130,7 @@ export default function CreatePost() {
                     await mutation.mutateAsync({
                         title: title,
                         tags: tags,
-                        content: content,
+                        content: mkdwn,
                         coverImage: base64
                     });
 
@@ -187,7 +194,7 @@ export default function CreatePost() {
                         </div>
                         <ul id="ul-tag" className="flex flex-row items-center flex-wrap w-100">
                             <li className="self-center grow" style={{ order: "1" }}>
-                                {currentSize < 4 ? <input type="text" name="tags" id="tags-input" placeholder={(currentSize == 0 ? "Add up to 4 tags" : "Add another...")} className="w-full" onFocus={() => asideGuideChange(1)} onBlur={handleTags} />
+                                {tags.length < 4 ? <input type="text" name="tags" id="tags-input" placeholder={(currentSize == 0 ? "Add up to 4 tags" : "Add another...")} className="w-full" onFocus={() => asideGuideChange(1)} onKeyDown={handleTagsKeyDown} onBlur={handleTags} />
                                     : null
                                 }</li>
                         </ul>

@@ -6,9 +6,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Post from "@/components/post";
 import Billboard from "@/components/billboard";
+import { api } from "@/trpc/react";
 
 export default function Home() {
-
+  const allPosts = api.post.getAllPosts.useQuery().data;
   const pathName = usePathname();
 
   function checkPath() {
@@ -23,7 +24,7 @@ export default function Home() {
 
   return (
 
-    <div className="max-w-[1380px] mx-auto grid md:grid-cols-[2fr_5fr] lg:grid-cols-[250px_2fr_1fr] gap-5">
+    <div className="max-w-[1380px] mx-auto p-4 grid md:grid-cols-[2fr_5fr] lg:grid-cols-[250px_2fr_1fr] gap-5">
       <SideBar />
       <div className="">
         <div className="flex justify-between items-center">
@@ -37,9 +38,17 @@ export default function Home() {
           </div>
         </div >
         <div>
-          <Post></Post>
-          <Post></Post>
-          <Post></Post>
+          {allPosts?.map((post, index) => {
+            console.log(post.createdById);
+            if (index != 0) {
+              post.coverImage = null;
+            }
+            // const user = api.profile.getProfile.useQuery(post.createdById, { enabled: !!post.createdById });
+            // if (user.data === null) {
+            //   return null;
+            // }
+            return <Post post={post} user={null} />;
+          })}
         </div>
       </div >
       <div className="hidden lg:block">

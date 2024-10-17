@@ -98,3 +98,8 @@ body {
 .brand-bg {
   background: linear-gradient(180deg, #000000 8rem, transparent 8rem);
 }
+
+.brand-bg-2 {
+  background: linear-gradient(180deg, #000000 2rem, transparent 8rem);
+}
+

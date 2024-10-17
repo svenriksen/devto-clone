@@ -27,9 +27,8 @@ export default async function RootLayout({
         <TRPCReactProvider>
           <SessionProvider session={session}>
             <Navbar />
-            <div className="p-4">
-              {children}
-            </div>
+            {children}
+
           </SessionProvider>
         </TRPCReactProvider>
       </body>
