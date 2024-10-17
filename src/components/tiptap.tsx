@@ -4,21 +4,76 @@ import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import React from 'react';
+import { unified } from 'unified'
+import remarkParse from 'remark-parse'
+import remarkRehype from 'remark-rehype'
+import rehypeSanitize from 'rehype-sanitize'
+import rehypeStringify from 'rehype-stringify'
 
-const Tiptap = ({ onchange }: { onchange: () => void }) => {
-    const editor = useEditor({
+const Tiptap = ({ onchange,
+    content,
+    setContent,
+    mkdwn,
+    setMkdwn
+}:
+    {
+        onchange: () => void,
+        content: string,
+        setContent: React.Dispatch<React.SetStateAction<string>>,
+        mkdwn: string,
+        setMkdwn: React.Dispatch<React.SetStateAction<string>>
+    }) => {
+    const editor: unknown = useEditor({
+        enableInputRules: false,
+        immediatelyRender: false,
         extensions: [
-            StarterKit,
+            StarterKit.configure({
+                blockquote: { HTMLAttributes: { class: 'font-sans' } },
+                bold: { HTMLAttributes: { class: 'font-sans' } },
+                bulletList: { HTMLAttributes: { class: 'font-sans' } },
+                code: { HTMLAttributes: { class: 'font-sans' } },
+                codeBlock: { HTMLAttributes: { class: 'font-sans' } },
+                hardBreak: { HTMLAttributes: { class: 'font-sans' } },
+                heading: { HTMLAttributes: { class: 'font-sans' } },
+                horizontalRule: { HTMLAttributes: { class: 'font-sans' } },
+                italic: { HTMLAttributes: { class: 'font-sans' } },
+                listItem: { HTMLAttributes: { class: 'font-sans' } },
+                orderedList: { HTMLAttributes: { class: 'font-sans' } },
+                paragraph: { HTMLAttributes: { class: 'font-sans' } },
+
+                strike: { HTMLAttributes: { class: 'font-sans' } },
+            }),
             Placeholder.configure({
                 placeholder: 'Write your post content here...',
             }),
         ],
-        content: ``,
+        content: content,
         editorProps: {
             attributes: {
                 class: 'h-full py-5 px-5 md:py-8 md:px-12 lg:px-16 whitespace-pre-wrap text-base font-mono',
             },
         },
+        async onUpdate({ editor }) {
+            const file = await unified()
+                .use(remarkParse)
+                .use(remarkRehype)
+                .use(rehypeSanitize)
+                .use(rehypeStringify)
+                .process(editor.getText());
+            setMkdwn(`<!DOCTYPE html>
+                <html>
+                <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                </head>
+                <body>
+                <div style="font-family: ui-sans-serif, system-ui, sans-serif;" class="font-sans" >
+                `
+                + String(file) +
+                `</div > </body></html>
+                `);
+            setContent(editor.getText());
+        }
     });
 
     if (!editor) {

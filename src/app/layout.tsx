@@ -4,6 +4,7 @@ import "./globals.css";
 import SessionProvider from "@/util/SessionProvider";
 
 import { getServerAuthSession } from "@/server/auth";
+import { TRPCReactProvider } from "@/trpc/react";
 
 // import { HamburgerClicked } from "@/util/context";
 
@@ -23,12 +24,14 @@ export default async function RootLayout({
       <body
         className={"text-gray-900 font-sans relative"}
       >
-        <SessionProvider session={session}>
-          <Navbar />
-          <div className="p-4">
-            {children}
-          </div>
-        </SessionProvider>
+        <TRPCReactProvider>
+          <SessionProvider session={session}>
+            <Navbar />
+            <div className="p-4">
+              {children}
+            </div>
+          </SessionProvider>
+        </TRPCReactProvider>
       </body>
     </html >
   );

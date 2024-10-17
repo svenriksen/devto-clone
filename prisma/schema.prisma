@@ -15,15 +15,57 @@ datasource db {
 }
 
 model Post {
-    id        Int      @id @default(autoincrement())
-    name      String
+    id         String  @id @default(cuid())
+    title      String
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     createdBy   User   @relation(fields: [createdById], references: [id])
     createdById String
+    content     String
+    coverImage  String?
+    tags        String[]
+    Comments    Comment[]
+    Reaction    Reaction[]
 
-    @@index([name])
+    @@index([title])
+}
+
+model Comment {
+    id        String  @id @default(cuid())
+    content   String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+    Post        Post   @relation(fields: [postId], references: [id])
+    postId      String
+    likesComment LikeComment[]
+}
+
+model Reaction {
+    id        Int      @id @default(autoincrement())
+    type      String
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+    Post        Post   @relation(fields: [postId], references: [id])
+    postId      String
+}
+
+model LikeComment {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    createdBy   User   @relation(fields: [createdById], references: [id])
+    createdById String
+    Comment     Comment @relation(fields: [commentId], references: [id])
+    commentId   String
 }
 
 // Necessary for Next auth
@@ -61,9 +103,14 @@ model User {
     emailDisplay  Boolean   @default(false)
     emailVerified DateTime?
     image         String?
+    bio           String?
     accounts      Account[]
     sessions      Session[]
     posts         Post[]
+    comments      Comment[]
+    reactions     Reaction[]
+    likeComments  LikeComment[]
+
 }
 
 model VerificationToken {

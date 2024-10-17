@@ -7,7 +7,10 @@ import Image from "next/image";
 import Icon from "/public/icon.png";
 import Tiptap from "@/components/tiptap";
 import { Tooltip } from "@nextui-org/tooltip"
+import { api } from "@/trpc/react";
+import { redirect } from "next/dist/server/api-utils";
 
+// import Markdown from "@/components/mdwn";
 
 export default function CreatePost() {
     const { data: session } = useSession();
@@ -18,6 +21,10 @@ export default function CreatePost() {
     const [tags, setTags] = React.useState<string[]>([]);
     const [image, setImage] = React.useState<boolean>(false);
 
+    const [content, setContent] = React.useState<string>("");
+    const [mkdwn, setMkdwn] = React.useState<string>("");
+
+    const mutation = api.post.create.useMutation();
     function asideGuideChange(index: number) {
         let active = isActive;
         active = active.map((_, i) => i == index);
@@ -92,7 +99,49 @@ export default function CreatePost() {
 
     }
 
-    return <div className="absolute w-screen h-screen top-0 left-0 z-50 bg-[--background] text-sm">
+
+
+    async function postPublish(formData: FormData) {
+        for (const pair of formData.entries()) {
+            console.log(pair);
+            console.log(pair[1])
+        }
+        if (formData.get("title") == null || formData.get("title") == "") {
+            alert("Title is required");
+            return;
+        }
+        const title = formData.get("title") as string;
+
+        const upload = () => {
+            const reader = new FileReader();
+            return new Promise((resolve, reject) => {
+                let base64: ArrayBuffer | string = "";
+                reader.readAsDataURL(formData.get("image") as Blob);
+                reader.onload = async () => {
+                    base64 = reader.result as string;
+                    console.log(base64);
+                    await mutation.mutateAsync({
+                        title: title,
+                        tags: tags,
+                        content: content,
+                        coverImage: base64
+                    });
+
+                }
+                resolve("done");
+            });
+        }
+        await upload();
+        console.log(`/${mutation.data?.createdById}/${mutation.data?.id}`);
+        await navigate(`/${session?.user.id}`).catch(console.error);
+        if (mutation.error) {
+            console.error(mutation.error);
+            return;
+        }
+
+    }
+
+    return <div className="absolute w-screen h-screen top-0 left-0 z-50 bg-[--background] text-base">
         <div className="relative">
             <form className="max-w-[1380px] mx-auto grid p-0 gap-x-2 grid-cols-[100%] md:grid-cols-[64px_7fr_3fr] grid-rows-[min-content_1fr_min-content] md:gap-x-4 md:px-2 lg:px-4">
                 <div className="flex flex-row justify-between items-center h-14 col-span-2">
@@ -110,25 +159,26 @@ export default function CreatePost() {
                         </button>
                     </div>
                 </div>
-                <div className="rounded-lg bg-white h-[calc(100vh-128px)] relative shadow flex flex-col overflow-y-auto md:row-start-2 md:row-end-2 md:col-span-2 lg:col-span-1 lg:col-start-2 lg:col-end-2">
+                {(isEditing ? <div className="rounded-lg bg-white h-[calc(100vh-128px)] relative shadow flex flex-col overflow-y-auto md:row-start-2 md:row-end-2 md:col-span-2 lg:col-span-1 lg:col-start-2 lg:col-end-2">
                     <div className="py-5 px-5 md:py-8 md:px-12 lg:px-16">
                         <div className="flex flex-row items-center mb-5">
                             <div className="flex items-center">
                                 {(image ? <Image src={""} alt="" id="image-preview" className="w-[40%] h-auto" /> : null)}
                                 <Tooltip className="w-fit bg-black/90 text-white text-sm py-1 px-2 rounded-lg" placement="bottom" size="sm" content="Use a ratio of 1000:420 for best results.">
                                     <label htmlFor="image" className="w-auto z-10 cursor-pointer font-medium border-[#a3a3a3] border-solid border-2 rounded-lg py-2 px-4 text-sm">
-                                        {(image ? "Change" : "Add a cover image")}
+                                        {(image ? <>Change</> : <>Add a cover image</>)}
                                         <input type="file" onChange={(event) => uploadImage(event)} accept="image/*" className="outline-0 absolute -z-10 opacity-0 hidden" id="image" name="image" />
                                     </label>
-                                    <button className=" w-auto z-10 cursor-pointer font-medium text-red-600 border-solid border-2 rounded-lg py-2 px-4 text-sm" onClick={(event) => {
-                                        event.preventDefault();
-                                        setImage(false);
-                                        const img = document.getElementById("image-preview") as HTMLImageElement;
-                                        img.src = "";
-                                    }}>
-                                        Remove
-                                    </button>
                                 </Tooltip>
+                                {(image ? <button className=" w-auto z-10 cursor-pointer font-medium text-red-600 border-solid border-2 rounded-lg py-2 px-4 text-sm" onClick={(event) => {
+                                    event.preventDefault();
+                                    setImage(false);
+                                    const img = document.getElementById("image-preview") as HTMLImageElement;
+                                    img.src = "";
+                                }}>
+                                    Remove
+                                </button> : null)}
+
                             </div>
                         </div>
 
@@ -143,11 +193,16 @@ export default function CreatePost() {
                         </ul>
                     </div>
 
-                    <Tiptap onchange={() => asideGuideChange(2)} />
+                    <Tiptap onchange={() => asideGuideChange(2)} content={content} setContent={setContent} mkdwn={mkdwn} setMkdwn={setMkdwn} />
 
-                </div>
+                </div> :
+                    <div className="rounded-lg bg-white h-[calc(100vh-128px)] relative shadow flex flex-col overflow-y-auto md:row-start-2 md:row-end-2 md:col-span-2 lg:col-span-1 lg:col-start-2 lg:col-end-2 py-8 px-12">
+                        <iframe src="" key={mkdwn} frameBorder={0} srcDoc={mkdwn} className="font-sans h-full">
+                            {/* <div dangerouslySetInnerHTML={{ __html: mkdwn }} ></div> */}
+                        </iframe>
+                    </div>)}
                 <div className="hidden md:block md:row-start-2 md:row-end-2 md:col-start-3">
-                    <div className={(isActive[0] ? "" : "opacity-0") + " sticky top-36"}>
+                    <div className={(isActive[0] ? "" : "opacity-0 h-0") + " sticky top-36"}>
                         <div className={(isActive[0] ? "transition-aside" : "")}>
                             <h4 className="font-bold mb-2">Writing a Great Post Title</h4>
                             <ul className="list-disc pl-4 font-light">
@@ -156,7 +211,7 @@ export default function CreatePost() {
                             </ul>
                         </div>
                     </div>
-                    <div className={(isActive[1] ? "" : "opacity-0") + " sticky top-[229px]"}>
+                    <div className={(isActive[1] ? "" : "opacity-0 h-0") + " sticky top-[229px]"}>
                         <div className={(isActive[1] ? "transition-aside" : "")}>
                             <h4 className="font-bold mb-2">Tagging Guidelines</h4>
                             <ul className="list-disc pl-4 font-light">
@@ -166,7 +221,7 @@ export default function CreatePost() {
                             </ul>
                         </div>
                     </div>
-                    <div className={(isActive[2] ? "" : "opacity-0") + " sticky top-[362px]"}>
+                    <div className={(isActive[2] ? "" : "opacity-0 h-0") + " sticky top-[362px]"}>
                         <div className={(isActive[2] ? "transition-aside" : "")}>
                             <h4 className="font-bold mb-2">Editor Basics</h4>
                             <ul className="list-disc pl-4 font-light">
@@ -176,7 +231,7 @@ export default function CreatePost() {
                             </ul>
                         </div>
                     </div>
-                    <div className={(isActive[3] ? "" : "opacity-0") + " sticky top-[890px]"}>
+                    <div className={(isActive[3] ? "" : "opacity-0 h-0") + " sticky top-[890px]"}>
                         <div className={(isActive[3] ? "transition-aside" : "")}>
                             <h4 className="font-bold mb-2">Publishing Tips</h4>
                             <ul className="list-disc pl-4 font-light">
@@ -189,7 +244,7 @@ export default function CreatePost() {
                 </div>
 
                 <div className="h-[72px] px-2 md:p-0 flex items-center row-start-3 col-span-2 md:col-start-1 lg:col-start-2" onMouseEnter={() => asideGuideChange(3)}>
-                    <button type="submit" className="bg-[rgb(59,73,223)] py-2 px-4 font-medium text-white hover:bg-[rgb(47,58,178)] rounded-lg mr-2">Publish</button>
+                    <button type="submit" formAction={postPublish} className="bg-[rgb(59,73,223)] py-2 px-4 font-medium text-white hover:bg-[rgb(47,58,178)] rounded-lg mr-2">Publish</button>
                     <button className="py-2 px-4 font-medium btn rounded-lg mr-2 text-ellipsis leading-tight">Save draft</button>
                     <button className="py-2 px-4 font-medium btn rounded-lg">
                         <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" className="crayons-icon c-btn__icon"><path d="M12 1l9.5 5.5v11L12 23l-9.5-5.5v-11L12 1zm0 2.311L4.5 7.653v8.694l7.5 4.342 7.5-4.342V7.653L12 3.311zM12 16a4 4 0 110-8 4 4 0 010 8zm0-2a2 2 0 100-4 2 2 0 000 4z"></path></svg>

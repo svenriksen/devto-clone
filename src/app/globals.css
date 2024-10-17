@@ -91,3 +91,10 @@ body {
     text-wrap: balance;
   }
 }
+
+
+/************************Profile****************************/
+
+.brand-bg {
+  background: linear-gradient(180deg, #000000 8rem, transparent 8rem);
+}
