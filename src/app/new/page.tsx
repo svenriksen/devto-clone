@@ -81,7 +81,7 @@ export default function CreatePost() {
     useEffect(() => {
 
         if (!session) {
-            navigate("/login").catch(console.error);
+            navigate("login").catch(console.error);
         }
     }, [session]);
 
@@ -142,7 +142,7 @@ export default function CreatePost() {
         }
         await upload();
         console.log(`/${mutation.data?.createdById}/${mutation.data?.id}`);
-        await navigate(`/${session?.user.id}`).catch(console.error);
+        await navigate(`${session?.user.id}`).catch(console.error);
         if (mutation.error) {
             console.error(mutation.error);
             return;

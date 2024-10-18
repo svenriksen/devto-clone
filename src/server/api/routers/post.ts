@@ -108,6 +108,8 @@ export const postRouter = createTRPCRouter({
       },
     });
   }),
-
+  deleteComment: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+    return await ctx.db.comment.delete({ where: { id: input.id } });
+  }),
 
 });

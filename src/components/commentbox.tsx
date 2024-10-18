@@ -5,13 +5,16 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import Tiptap from './tiptap';
 import { api } from '@/trpc/react';
-import { redirect } from 'next/navigation';
+import { redirect, usePathname, useRouter } from 'next/navigation';
+import { navigate } from '@/app/actions';
 
 
 export default function CommentBox({ post }
     : {
         post: { id: string },
     }) {
+    const router = useRouter();
+    const path = usePathname();
     const { data: session } = useSession();
     const [content, setContent] = React.useState("");
     const [mkdwn, setMkdwn] = React.useState("");
@@ -24,7 +27,11 @@ export default function CommentBox({ post }
     }
     function submitForm(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 
-        postMutation.mutate({ content: mkdwn, postId: post.id });
+        postMutation.mutateAsync({ content: mkdwn, postId: post.id }).catch(console.error);
+        console.log(path.substring(1));
+        navigate(path.substring(1)).catch(console.error);
+        // window.location.reload();
+        router.refresh();
         // redirect(`/${session?.user.id}/${post.id}`);
     }
 
