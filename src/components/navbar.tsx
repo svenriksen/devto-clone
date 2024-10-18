@@ -31,6 +31,10 @@ function Navbar() {
         setProfileClickedState(!profileClickedState);
     }
 
+    function profileClickedFalse() {
+        setProfileClickedState(false);
+    }
+
     return (
         <header className="fixed-top-0 left-0 right-0 bg-white shadow-sm z-20">
             <nav className="flex items-center justify-between p-4 h-14 m-auto relative max-w-[1380px]">
@@ -71,7 +75,7 @@ function Navbar() {
                             </svg>
                         </Link>
 
-                        <Link href="/new" className="hidden md:inline-block font-medium">
+                        <Link href="/new" className="hidden md:inline-block font-medium" onClick={profileClickedFalse}>
                             <li className="mx-2 py-2 px-4 whitespace-nowrap border-solid text-[rgba(47,58,178)] hover:underline hover:!text-white hover:bg-[rgba(47,58,178)] border-[rgba(47,58,178)] border-[1px] rounded-lg font-medium">
                                 Create Post
                             </li>
@@ -83,42 +87,42 @@ function Navbar() {
                         </Link>
                         <div className="mx-1 hover:bg-black/25 rounded-full">
                             <button onClick={profileClicked} className="flex items-center p-1">
-                                <Image src={session.user.image!} alt="" width={1000} height={1000} className="w-8 h-8 rounded-full object-contain"></Image>
+                                <Image src={session.user.image ?? ""} alt="" width={1000} height={1000} className="w-8 h-8 rounded-full object-contain"></Image>
                             </button>
                         </div>
                     </ul>
 
                     <ul className={(profileClickedState ? "inline-block opacity-100" : "hidden opacity-0 pre-click") + " absolute bg-white w-[98vw] min-w-[250px] md:max-w-[360px] md:w-max transition-profile left-2 md:left-auto md:right-2 top-full p-2 mt-1 z-[400]"}>
 
-                        <li className="w-full pb-2 mb-2 border-b-[1px] border-solid border-black/20">
-                            <Link href={"/" + session.user.id} className="rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
+                        <li className="w-full pb-2 mb-2 border-b-[1px] border-solid border-black/20" onClick={profileClickedFalse}>
+                            <Link href={"/" + session.user.id} className="rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)] w-full">
 
                                 <p className="text-inherit block font-medium leading-tight">{session.user.name}</p>
                                 <span className="text-inherit text-sm opacity-75">{"@" + session.user.id}</span>
 
                             </Link>
                         </li>
-                        <li className="w-full leading-tight">
+                        <li className="w-full leading-tight" onClick={profileClickedFalse}>
                             <Link href={"/dashboard"} className="w-full rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
                                 Dashboard
                             </Link>
                         </li>
-                        <li className="w-full leading-tight">
+                        <li className="w-full leading-tight" onClick={profileClickedFalse}>
                             <Link href={"/new"} className="w-full rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
                                 Create Post
                             </Link>
                         </li>
-                        <li className="w-full leading-tight">
+                        <li className="w-full leading-tight" onClick={profileClickedFalse}>
                             <Link href={"/dashboard"} className="w-full rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
                                 Reading List
                             </Link>
                         </li>
-                        <li className="w-full pb-2 leading-tight border-b-[1px] border-solid border-black/20">
+                        <li className="w-full pb-2 leading-tight border-b-[1px] border-solid border-black/20" onClick={profileClickedFalse}>
                             <Link href={"/dashboard"} className="w-full rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
                                 Settings
                             </Link>
                         </li>
-                        <li className="w-full pt-2 leading-tight">
+                        <li className="w-full pt-2 leading-tight" onClick={profileClickedFalse}>
                             <Link href={"/signout_confirm"} className="w-full rounded-lg inline-block px-4 py-2 leading-tight hover:underline hover:text-[rgb(47,58,178)] hover:bg-[rgba(59,73,223,0.1)]">
                                 Sign out
                             </Link>

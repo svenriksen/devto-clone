@@ -1,36 +1,98 @@
 "use client";
 import { navigate } from "@/app/actions";
+import Comment from "@/components/comment";
+import CommentBox from "@/components/commentbox";
 import { api } from "@/trpc/react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { set } from "zod";
 
 export default function Post({ params }: { params: { userId: string, postId: string } }) {
+    const { data: session } = useSession();
     const post = api.post.getPostById.useQuery({ id: params.postId });
     const user = api.profile.getProfile.useQuery(post.data?.createdById ?? "", { enabled: !!post.data?.createdById }).data;
+    const comments = api.post.getPostAllComments.useQuery({ id: post.data?.id ?? "", quantity: -1 }).data;
     const temp = api.post.deletePosts.useMutation();
+    const reactions = api.post.getPostReactionCount.useQuery({ id: post.data?.id ?? "" });
+    const isCurrentUserReaction = api.post.getPostReactions.useQuery({ id: post.data?.id ?? "" });
+
+    const tempAddReaction = api.post.reactToPost.useMutation();
+    const tempRemoveReaction = api.post.removePostReaction.useMutation();
+
+    const [react, setReact] = useState(false);
+    const [reactionsCount, setReactionsCount] = useState(0);
+
+    useEffect(() => {
+        if (isCurrentUserReaction === undefined) { return; }
+        if (isCurrentUserReaction.data) {
+            setReact(true);
+            reactions.refetch().then(() => {
+                setReactionsCount(reactions.data! ?? 0);
+            }).catch(console.error);
+        }
+        else {
+            setReact(false);
+            reactions.refetch().then(() => {
+                setReactionsCount(reactions.data! ?? 0);
+            }).catch(console.error);
+        }
+    }, [isCurrentUserReaction, reactions]);
+
+    const [formFocus, setFormFocus] = useState(false);
+
+    function reactToPost(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        event.preventDefault();
+        if (isCurrentUserReaction.data!.length === 0) {
+            tempAddReaction.mutate({ id: post.data?.id ?? "", reaction: "like" });
+            isCurrentUserReaction.refetch().then(() => {
+                setReact(isCurrentUserReaction.data!.length > 0);
+            }).catch(console.error);
+            reactions.refetch().then(() => {
+                setReactionsCount(reactions.data! ?? 0);
+            }).catch(console.error);
+        }
+        else {
+            // api.post.reactToPost.useMutation({ id: post.data?.id ?? "", reaction: "unlike" });
+            if (isCurrentUserReaction.data!.length > 0) {
+                tempRemoveReaction.mutate({ id: isCurrentUserReaction.data![0]!.id ?? 0 });
+                isCurrentUserReaction.refetch().then(() => {
+                    setReact(isCurrentUserReaction.data!.length > 0);
+                }).catch(console.error);
+                reactions.refetch().then(() => {
+                    setReactionsCount(reactions.data! ?? 0);
+                }).catch(console.error);
+            }
+        }
+    }
+
     return (
 
         <>
             <div className="max-w-[1308px] w-full mx-auto grid grid-cols-1 gap-0 md:gap-2 md:p-2 md:grid-cols-[4rem_1fr] lg:grid-cols-[4rem_7fr_3fr] lg:gap-4 lg:p-4">
                 <aside className="hidden md:grid gap-6 justify-center items-start mt-[calc(56px+6vh)] sticky w-full top-[calc(56px+6vh)] ">
                     <div className="grid gap-6 items-center">
-                        <button className="">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" role="img" aria-hidden="true" >
+                        <button onClick={(event) => reactToPost(event)}>
+                            <svg className={(react ? "!fill-red-500" : "") + " hover:bg-black/20 rounded-lg"} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#eb4d05" role="img" aria-hidden="true" >
                                 <g clipPath="url(#clip0_988_3276)">
                                     <path d="M19 14V17H22V19H18.999L19 22H17L16.999 19H14V17H17V14H19ZM20.243 4.75698C22.505 7.02498 22.583 10.637 20.479 12.992L19.059 11.574C20.39 10.05 20.32 7.65998 18.827 6.16998C17.324 4.67098 14.907 4.60698 13.337 6.01698L12.002 7.21498L10.666 6.01798C9.09103 4.60598 6.67503 4.66798 5.17203 6.17198C3.68203 7.66198 3.60703 10.047 4.98003 11.623L13.412 20.069L12 21.485L3.52003 12.993C1.41603 10.637 1.49503 7.01898 3.75603 4.75698C6.02103 2.49298 9.64403 2.41698 12 4.52898C14.349 2.41998 17.979 2.48998 20.242 4.75698H20.243Z" fill="#525252"></path>
                                 </g>
                                 <defs>
                                     <clipPath id="clip0_988_3276">
-                                        <rect width="24" height="24" fill="white"></rect>
+                                        <rect width="24" height="24" fill="#eb4d05"></rect>
                                     </clipPath>
                                 </defs>
                             </svg>
+
+                            {reactionsCount}
                         </button>
 
-                        <button className="">
+                        <button className="hover:bg-black/20 rounded-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true">
                                 <path d="M10 3h4a8 8 0 010 16v3.5c-5-2-12-5-12-11.5a8 8 0 018-8zm2 14h2a6 6 0 000-12h-4a6 6 0 00-6 6c0 3.61 2.462 5.966 8 8.48V17z"></path>
                             </svg>
+                            {comments?.length}
                         </button>
                         <button>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true">
@@ -38,7 +100,7 @@ export default function Post({ params }: { params: { userId: string, postId: str
                             </svg>
                         </button>
                     </div>
-                </aside>
+                </aside >
                 <div className="bg-white rounded-lg pb-8">
                     {(post.data?.coverImage !== null && post.data?.coverImage.replace("data:application/octet-stream;base64,", "").trim() !== "") ? <Image alt="" src={post.data?.coverImage ?? ""} width={2000} height={2000} />
                         : null}
@@ -53,11 +115,12 @@ export default function Post({ params }: { params: { userId: string, postId: str
                                     <div className="font-medium text-base">{user?.name}</div>
                                     <div className="text-xs text-[rgb(82,82,82)] mb-5">{post.data?.createdAt.toUTCString()}</div>
                                 </div>
-                                <button onClick={(event) => {
+                                {(session?.user.id === post.data?.createdById ? <button onClick={(event) => {
                                     event.preventDefault();
                                     temp.mutate({ id: post.data?.id ?? "" });
                                     navigate("/").catch(console.error);
-                                }} className="px-2 py-2 border-[1px] border-solid border-red-500 rounded-lg text-red-500 hover:bg-red-300">Delete</button>
+                                }} className="absolute -right-7 px-2 py-2 border-[1px] text-sm md:text-base border-solid border-red-500 rounded-lg text-red-500 hover:bg-red-300">Delete</button> : null)}
+
                             </div>
                         </Link>
 
@@ -76,8 +139,35 @@ export default function Post({ params }: { params: { userId: string, postId: str
 
                         </div>
                     </div>
+                    <div className="mb-4 border-t-[1px] border-solid border-black/10 py-8 px-12 md:px-16">
+                        <div className="mb-6 flex items-center justify-between">
+                            <div className="font-bold text-2xl">Top comments { }</div>
+                            <button className="rounded-lg leading-6 border-2 border-solid border-[#d6d6d7] hover:bg-[#f9f9f9] py-1 px-3">Subscribe</button>
+
+                        </div>
+                        <div onFocus={(event) => {
+                            event.preventDefault();
+                            setFormFocus(true);
+                        }} className="">
+
+                            {session?.user ? (formFocus ?
+                                < CommentBox post={{ id: post.data?.id ?? "" }} /> :
+                                <div className='text-sm pb-3 flex items-start pl-3 mr-3'>
+                                    {(session.user.image) ? <Image src={session.user.image} alt="" width={1000} height={1000} className='mr-2 w-8 h-auto rounded-full' /> :
+                                        <div className='mr-2 w-8 h-8 bg-black/10 rounded-full'></div>}
+                                    <textarea className="w-full h-28 border-solid border-[1px] border-black/40 rounded-lg p-2" placeholder="Add to the discussion" >
+                                    </textarea>
+                                </div>
+                            ) : null}
+                        </div>
+
+                        {(comments?.map((comment, index) => {
+                            return <Comment commentid={comment.id} userid={user?.id ?? ""} preview={false} key={index} />;
+                        })
+                        )}
+                    </div>
                 </div>
-                <div>
+                <div className="hidden lg:block">
                     <div className="brand-bg-2 rounded-lg">
                         <div className="pt-12 md:pt-16 w-100 max-w-[1024px] md:mx-2 rounded-lg lg:mx-auto pb-4">
                             <div className="mt-2 bg-white">

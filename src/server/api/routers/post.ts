@@ -80,13 +80,23 @@ export const postRouter = createTRPCRouter({
     });
   }),
 
-  getPostReactions: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
-    return await ctx.db.reaction.findMany({ where: { postId: input.id } });
+  getPostReactions: protectedProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    return await ctx.db.reaction.findMany({ where: { postId: input.id, createdById: ctx.session.user.id } });
   }),
 
-  getPostComments: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
-    return await ctx.db.comment.findMany({ where: { postId: input.id } });
+  removePostReaction: protectedProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
+    return await ctx.db.reaction.delete({ where: { id: input.id } });
   }),
+
+  getPostAllComments: publicProcedure.input(z.object({ id: z.string(), quantity: z.number() })).query(async ({ ctx, input }) => {
+    if (input.quantity === -1) { return await ctx.db.comment.findMany({ where: { postId: input.id } }); }
+    else { return await ctx.db.comment.findMany({ where: { postId: input.id }, take: input.quantity }); }
+  }),
+
+  getPostCommentById: publicProcedure.input(z.object({ id: z.string() })).query(async ({ ctx, input }) => {
+    return await ctx.db.comment.findUnique({ where: { id: input.id } });
+  }),
+
 
   createComment: protectedProcedure.input(z.object({ postId: z.string(), content: z.string() })).mutation(async ({ ctx, input }) => {
     return await ctx.db.comment.create({

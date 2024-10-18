@@ -4,6 +4,8 @@ import Image from "next/image";
 import { navigate } from "@/app/actions";
 import { api } from "@/trpc/react";
 import React from "react";
+import Comment from "./comment";
+
 
 export default function Post({
     post,
@@ -27,6 +29,8 @@ export default function Post({
 }) {
     const comments = api.post.getPostCommentsCount.useQuery({ id: post.id }).data;
     const reactions = api.post.getPostReactionCount.useQuery({ id: post.id }).data;
+    const allComments = api.post.getPostAllComments.useQuery({ id: post.id, quantity: 2 }).data;
+
 
     if (user === null) {
         const temp = api.profile.getProfile.useQuery(post.createdById).data;
@@ -39,10 +43,10 @@ export default function Post({
 
 
 
-    return <div className="my-4">
-        {(post.coverImage !== null) ? <Image className="object-cover w-full h-32 object-center" style={{ borderTopRightRadius: "0.75rem", borderTopLeftRadius: "0.75rem" }} src={post.coverImage ?? ""} alt="" width={1000} height={1000} />
+    return <div className="mb-4">
+        {(post.coverImage !== null) ? <Image className="object-cover w-full h-32 object-center" style={{ borderTopRightRadius: "0.375rem", borderTopLeftRadius: "0.375rem" }} src={post.coverImage ?? ""} alt="" width={1000} height={1000} />
             : null}
-        <div className={"relative hover:cursor-pointer w-100 bg-white " + (post.coverImage === null ? "rounded-lg" : "")} style={{
+        <div className={"relative hover:cursor-pointer w-100 bg-white border-solid border-[1px] border-black/10" + (post.coverImage === null ? "rounded-lg" : "")} style={{
             borderBottomRightRadius: "0.75rem",
             borderBottomLeftRadius: "0.75rem",
         }} >
@@ -59,14 +63,14 @@ export default function Post({
                 <div className="pb-3">
                     <Link href={`${user?.id}/${post.id}`} className="text-2xl font-bold hover:text-[rgba(47,58,178)]">{post.title}</Link>
                 </div>
-                <div className="pb-4">
+                <div className="pb-4 -ml-2">
                     {post.tags.map((tag, index) => {
                         return <Link href={"/"} key={index} className="text-sm btn !px-2 !py-1 border-[1px] border-transparent !bg-white hover:!bg-[rgba(59,73,223)]/25 hover:border-[rgba(59,73,223)] hover:border-[1px] hover:border-solid transition duration-300">
                             <span className="text-[rgba(59,73,223)]">#</span>{tag}
                         </Link>
                     })}
                 </div>
-                <div className="pb-4 flex items-center" >
+                <div className="pb-4 -ml-2 flex items-center" >
                     <Link href={"/"} className="flex items-center hover:bg-slate-100/50 px-2 py-1 w-fit rounded">
                         <Image alt="" src="https://dev.to/assets/sparkle-heart-5f9bee3767e18deb1bb725290cb151c25234768a0e9a2bd39370c382d02920cf.svg" width="24" height="24" />
                         <div className="ml-2">{reactions} Reactions</div>
@@ -76,6 +80,13 @@ export default function Post({
                         <div className="ml-2">{comments} Comments</div>
                     </Link>
                 </div>
+            </div>
+            <div className="-mt-2 bottom-3">
+                {allComments?.map((comment, index) => {
+                    return <div key={index} className="">
+                        <Comment commentid={comment.id} userid={comment.createdById} preview={true} />
+                    </div>
+                })}
             </div>
         </div>
     </div >;
