@@ -6,6 +6,7 @@ import { navigate } from "../actions";
 import { notFound } from "next/navigation";
 import Post from "@/components/post";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 export default function Profile({ params }: { params: { userId: string } }) {
 
@@ -13,6 +14,8 @@ export default function Profile({ params }: { params: { userId: string } }) {
     const postNumber = api.profile.getPostCount.useQuery(params.userId).data;
     const commentNumber = api.profile.getCommentCount.useQuery(params.userId).data;
     const posts = api.profile.getAllPostsFromUser.useQuery(params.userId).data;
+
+    const { data: session } = useSession();
 
     // const [profile, setProfile] = React.useState(api.profile.getProfile.useQuery(params.userId).data);
 
@@ -42,9 +45,12 @@ export default function Profile({ params }: { params: { userId: string } }) {
                             </div> : null}
 
                             <div className="flex justify-end pt-6 pr-6 md:top-16">
-                                <button className="bg-[rgb(59,73,223)] py-2 px-4 font-medium text-white hover:bg-[rgb(47,58,178)] rounded-lg mr-2">
-                                    Follow
-                                </button>
+                                {userId.data?.id == session?.user.id ?
+                                    <button onClick={(event) => { navigate("settings").catch(console.error); }} className="bg-[rgb(59,73,223)] py-2 px-4 font-medium text-white hover:bg-[rgb(47,58,178)] rounded-lg mr-2">
+                                        Edit profile</button> :
+                                    <button className="bg-[rgb(59,73,223)] py-2 px-4 font-medium text-white hover:bg-[rgb(47,58,178)] rounded-lg mr-2">
+                                        Follow
+                                    </button>}
                                 <button className="px-2 hover:bg-[rgb(0,0,0)]/5 rounded-lg">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" role="img" aria-labelledby="abyohdzalx6c4nxnqym92x9n2cecu84w" className="crayons-icon dropdown-icon"><title id="abyohdzalx6c4nxnqym92x9n2cecu84w">User actions</title><path fill-rule="evenodd" clip-rule="evenodd" d="M7 12a2 2 0 11-4 0 2 2 0 014 0zm7 0a2 2 0 11-4 0 2 2 0 014 0zm5 2a2 2 0 100-4 2 2 0 000 4z"></path></svg>
                                 </button>
