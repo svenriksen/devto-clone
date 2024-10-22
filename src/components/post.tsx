@@ -41,7 +41,38 @@ export default function Post({
         }
     }
 
+    function calculateReadingTime(content: string): number {
+        // Assuming average reading speed of 200 words per minute
+        const wordsPerMinute = 200;
 
+        // Calculate word count of the text content
+        const wordCount = content.replace(/<[^>]+>/g, " ").split(/\s+/).length;
+
+        // Calculate estimated reading time for text content
+        const textReadingTime = Math.ceil(wordCount / wordsPerMinute);
+
+        // Estimate media viewing time (adjust as needed)
+        const mediaTypes: Record<string, number> = {
+            image: 10, // 10 seconds per image
+            video: 120, // 2 minutes per video
+        };
+
+        let totalMediaTime = 0;
+
+        Object.keys(mediaTypes).forEach((mediaType) => {
+            const mediaCount = (content.match(new RegExp(`<${mediaType}`, "gi")) ?? [])
+                .length;
+            totalMediaTime += mediaCount * 1;
+        });
+
+        // Convert media time from seconds to minutes
+        const mediaReadingTime = Math.ceil(totalMediaTime / 60);
+
+        // Combine text and media reading times
+        const totalReadingTime = textReadingTime + mediaReadingTime;
+
+        return totalReadingTime;
+    }
 
     return <div className="mb-4">
         {(post.coverImage !== null) ? <Image className="object-cover w-full h-32 object-center" style={{ borderTopRightRadius: "0.375rem", borderTopLeftRadius: "0.375rem" }} src={post.coverImage ?? ""} alt="" width={1000} height={1000} />
@@ -56,7 +87,7 @@ export default function Post({
                 {(user?.image) ? <Image src={user?.image} alt="" width={1000} height={1000} className='mr-2 my-3 w-8 h-auto rounded-full' /> :
                     <div className='mr-2 my-3 w-8 h-8 bg-black/10 rounded-full'></div>}
 
-                <div>
+                <div className="w-full">
                     <div className="py-3">
                         <div className="absolute w-8 h-8 -left-10 top-3 rounded-full">
                         </div>
@@ -73,15 +104,23 @@ export default function Post({
                             </Link>
                         })}
                     </div>
-                    <div className="pb-4 -ml-2 flex items-center" >
-                        <Link href={"/"} className="flex items-center hover:bg-slate-100/50 px-2 py-1 w-fit rounded">
-                            <Image alt="" src="https://dev.to/assets/sparkle-heart-5f9bee3767e18deb1bb725290cb151c25234768a0e9a2bd39370c382d02920cf.svg" width="24" height="24" />
-                            <div className="ml-2">{reactions} Reactions</div>
-                        </Link>
-                        <Link href={"/"} className="flex items-center hover:bg-slate-100/50 px-2 py-1 w-fit rounded">
-                            <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" ><path d="M10.5 5h3a6 6 0 110 12v2.625c-3.75-1.5-9-3.75-9-8.625a6 6 0 016-6zM12 15.5h1.5a4.501 4.501 0 001.722-8.657A4.5 4.5 0 0013.5 6.5h-3A4.5 4.5 0 006 11c0 2.707 1.846 4.475 6 6.36V15.5z"></path></svg>
-                            <div className="ml-2">{comments} Comments</div>
-                        </Link>
+                    <div className="pb-4 -ml-2 flex items-center w-full justify-between" >
+                        <div className="flex items-center">
+                            <Link href={"/"} className="flex items-center hover:bg-slate-100/50 px-2 py-1 w-fit rounded">
+                                <Image alt="" src="https://dev.to/assets/sparkle-heart-5f9bee3767e18deb1bb725290cb151c25234768a0e9a2bd39370c382d02920cf.svg" width="24" height="24" />
+                                <div className="ml-2">{reactions} Reactions</div>
+                            </Link>
+                            <Link href={"/"} className="flex items-center hover:bg-slate-100/50 px-2 py-1 w-fit rounded">
+                                <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" ><path d="M10.5 5h3a6 6 0 110 12v2.625c-3.75-1.5-9-3.75-9-8.625a6 6 0 016-6zM12 15.5h1.5a4.501 4.501 0 001.722-8.657A4.5 4.5 0 0013.5 6.5h-3A4.5 4.5 0 006 11c0 2.707 1.846 4.475 6 6.36V15.5z"></path></svg>
+                                <div className="ml-2">{comments} Comments</div>
+                            </Link>
+                        </div>
+                        <div className="flex items-center">
+                            <h2 className="text-sm">{calculateReadingTime(post.content) + " min read"}</h2>
+                            <button className="!p-2 !bg-transparent hover:!bg-[rgba(59,73,223,0.1)] btn ml-2">
+                                <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M6.75 4.5h10.5a.75.75 0 01.75.75v14.357a.375.375 0 01-.575.318L12 16.523l-5.426 3.401A.375.375 0 016 19.607V5.25a.75.75 0 01.75-.75zM16.5 6h-9v11.574l4.5-2.82 4.5 2.82V6z"></path></svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

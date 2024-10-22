@@ -10,7 +10,7 @@ export default function Settings() {
 
     const { data: session } = useSession();
 
-    const [isClicked, setIsClicked] = React.useState([false, false, false, false, false, false]);
+    const [isClicked, setIsClicked] = React.useState([true, false, false, false, false, false]);
 
 
     function checkClick(index: number) {
