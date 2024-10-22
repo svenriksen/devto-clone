@@ -62,19 +62,19 @@ export default function Profile({ params }: { params: { userId: string } }) {
                 </div>
                 <div className="pt-4 md:pt-0 md:grid md:grid-cols-[2fr_5fr] md:gap-4 w-100 max-w-[1024px] md:mx-2 rounded-lg lg:mx-auto">
                     <div className="hidden md:block h-fit p-4 bg-white rounded-lg">
-                        <div className="flex items-center mb-4">
+                        <div className="flex items-center mb-4 text-base">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="a5kpnmz878tjvhq81r8kpgojye57ax16" className="mr-3 fill-black/50"><title id="a5kpnmz878tjvhq81r8kpgojye57ax16">Post</title>
                                 <path d="M19 22H5a3 3 0 01-3-3V3a1 1 0 011-1h14a1 1 0 011 1v12h4v4a3 3 0 01-3 3zm-1-5v2a1 1 0 002 0v-2h-2zm-2 3V4H4v15a1 1 0 001 1h11zM6 7h8v2H6V7zm0 4h8v2H6v-2zm0 4h5v2H6v-2z"></path>
                             </svg>
                             {postNumber} posts published
                         </div>
-                        <div className="flex items-center mb-4">
+                        <div className="flex items-center mb-4  text-base">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="anh03bsppscntuqknxyyt3s732fac5fr" className="mr-3 fill-black/50"><title id="anh03bsppscntuqknxyyt3s732fac5fr">Comment</title>
                                 <path d="M10 3h4a8 8 0 010 16v3.5c-5-2-12-5-12-11.5a8 8 0 018-8zm2 14h2a6 6 0 000-12h-4a6 6 0 00-6 6c0 3.61 2.462 5.966 8 8.48V17z"></path>
                             </svg>
                             {commentNumber} comments written
                         </div>
-                        <div className="flex items-center">
+                        <div className="flex items-center text-base">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="aol3ax86n0xn2i2ba47umgjwh3qh1lzu" className="mr-3 fill-black/50"><title id="aol3ax86n0xn2i2ba47umgjwh3qh1lzu">Tag</title>
                                 <path d="M7.784 14l.42-4H4V8h4.415l.525-5h2.011l-.525 5h3.989l.525-5h2.011l-.525 5H20v2h-3.784l-.42 4H20v2h-4.415l-.525 5h-2.011l.525-5H9.585l-.525 5H7.049l.525-5H4v-2h3.784zm2.011 0h3.99l.42-4h-3.99l-.42 4z"></path>
                             </svg>

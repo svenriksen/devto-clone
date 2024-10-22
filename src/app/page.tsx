@@ -29,9 +29,9 @@ export default function Home() {
       <div className="">
         <div className="flex justify-between items-center mb-3">
           <div className="text-base">
-            <Link href={"/"} className={(checkPath() == "Relevant" ? "font-bold" : "") + " btn"}>Relevant</Link>
-            <Link href={"/latest"} className={(checkPath() == "Latest" ? "font-bold" : "") + " btn"}>Latest</Link>
-            <Link href={"/top/week"} className={(checkPath() == "Top" ? "font-bold" : "") + " btn"}>Top</Link>
+            <Link href={"/"} className={(checkPath() == "Relevant" ? "font-bold" : "") + " btn leading-loose"}>Relevant</Link>
+            <Link href={"/latest"} className={(checkPath() == "Latest" ? "font-bold" : "") + " btn leading-loose"}>Latest</Link>
+            <Link href={"/top/week"} className={(checkPath() == "Top" ? "font-bold" : "") + " btn leading-loose"}>Top</Link>
           </div>
           <div className="">
 

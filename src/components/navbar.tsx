@@ -38,7 +38,7 @@ function Navbar() {
     return (
         <header className="fixed-top-0 left-0 right-0 bg-white shadow-sm z-20">
             <nav className="flex items-center justify-between p-4 h-14 m-auto relative max-w-[1380px]">
-                <div className="flex flex-row flex-1 max-w-[680px]">
+                <div className="flex flex-row flex-1">
 
                     <button onClick={handleHamburger} className="md:hidden mx-2 !py-2 !px-2 btn !bg-transparent hover:!bg-[rgba(59,73,223)]/25">
                         <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" stroke="currentColor">
@@ -49,15 +49,13 @@ function Navbar() {
                         <Image src={Icon} alt="" width={0} height={0} style={{ width: "auto", height: "40px" }} />
                     </Link>
 
-                    <form onSubmit={handleSearch} className="hidden relative md:flex flex-1 mx-4 border-black/20 border-solid border-[1px] rounded-lg pl-[40px] pr-[142px]">
+                    <form onSubmit={handleSearch} className="hidden relative md:flex flex-1 mx-4 max-w-[680px] border-black/20 border-solid border-[1px] rounded-lg pl-[40px] pr-[142px]">
 
                         <button type="submit" className="absolute right-auto top-1 left-1 bottom-1">
 
                             {/* search icon */}
                             {/* <Image src={SearchIcon} alt="" width={0} height={0} style={{ width: "auto", height: "24px" }} /> */}
-                            <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0111 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 01-1.969 5.617zm-2.006-.742A6.977 6.977 0 0018 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 004.875-1.975l.15-.15z" />
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" className="crayons-icon c-btn__icon" focusable="false"><path d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0111 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 01-1.969 5.617zm-2.006-.742A6.977 6.977 0 0018 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 004.875-1.975l.15-.15z"></path></svg>
                         </button>
                         <input type="text" name="query" className="w-full " placeholder="Search..." />
                         <Link href={"https://www.algolia.com/developers/?utm_source=devto&utm_medium=referral"} className="absolute text-xs flex flex-row items-center right-2 top-1 mt-2 opacity-75">Powered by
@@ -67,7 +65,7 @@ function Navbar() {
                     </form>
 
                 </div>
-                {session ? <div className="">
+                {session ? <div className="ml-auto">
                     <ul className="flex flex-row items-center">
                         <Link href={"/search"} className="md:hidden p-2 inline-block hover:text-[rgba(47,58,178)] hover:bg-[rgba(59,73,223,0.1)] rounded-lg">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="a1vjn6flmyx96gwpwe9bigfhx323vwlh" className="crayons-icon"><title id="a1vjn6flmyx96gwpwe9bigfhx323vwlh">Search</title>
