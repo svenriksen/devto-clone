@@ -44,7 +44,7 @@ function Navbar() {
                 <div className="flex flex-row flex-1">
 
                     <button onClick={(event) => handleShow(event)} className="md:hidden mx-2 !py-2 !px-2 btn !bg-transparent hover:!bg-[rgba(59,73,223)]/25">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="asv9jjhu4oetdozzir2f9sb8ke3zeszp" class="crayons-icon"><title id="asv9jjhu4oetdozzir2f9sb8ke3zeszp">Navigation menu</title>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="asv9jjhu4oetdozzir2f9sb8ke3zeszp" className="crayons-icon"><title id="asv9jjhu4oetdozzir2f9sb8ke3zeszp">Navigation menu</title>
                             <path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"></path>
                         </svg>
                     </button>
