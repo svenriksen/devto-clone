@@ -13,14 +13,10 @@ export { Navbar };
 
 function Navbar() {
 
-    const [clicked, setClicked] = useState(false);
     const [profileClickedState, setProfileClickedState] = useState(false);
     const { data: session } = useSession();
+    const [show, setShow] = useState(false);
 
-    function handleHamburger() {
-
-        setClicked(!clicked);
-    }
 
     function handleSearch(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -35,18 +31,24 @@ function Navbar() {
     function profileClickedFalse() {
         setProfileClickedState(false);
     }
+    function handleShow(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        event.preventDefault();
+        setShow(!show);
+    }
 
     return (
         <header className="fixed-top-0 left-0 right-0 bg-white shadow-sm z-20">
-            <nav className="flex items-center justify-between p-4 h-14 m-auto relative max-w-[1380px]">
+            <nav className="flex items-center justify-between p-0 md:p-2 lg:p-4 h-14 m-auto relative max-w-[1380px]">
+
+                <div className={show ? 'absolute w-screen h-screen z-[10] left-0 top-0 bg-[#090909] opacity-50' : 'hidden'}></div>
                 <div className="flex flex-row flex-1">
 
-                    <button onClick={handleHamburger} className="md:hidden mx-2 !py-2 !px-2 btn !bg-transparent hover:!bg-[rgba(59,73,223)]/25">
-                        <svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z" />
+                    <button onClick={(event) => handleShow(event)} className="md:hidden mx-2 !py-2 !px-2 btn !bg-transparent hover:!bg-[rgba(59,73,223)]/25">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="asv9jjhu4oetdozzir2f9sb8ke3zeszp" class="crayons-icon"><title id="asv9jjhu4oetdozzir2f9sb8ke3zeszp">Navigation menu</title>
+                            <path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"></path>
                         </svg>
                     </button>
-                    <SideBar nav={true} />
+                    <SideBar nav={true} show={show} setShow={setShow} />
                     <Link href="/">
                         <Image src={Icon} alt="" width={0} height={0} style={{ width: "auto", height: "40px" }} />
                     </Link>
@@ -58,6 +60,7 @@ function Navbar() {
                             {/* search icon */}
                             {/* <Image src={SearchIcon} alt="" width={0} height={0} style={{ width: "auto", height: "24px" }} /> */}
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true" className="crayons-icon c-btn__icon" focusable="false"><path d="M18.031 16.617l4.283 4.282-1.415 1.415-4.282-4.283A8.96 8.96 0 0111 20c-4.968 0-9-4.032-9-9s4.032-9 9-9 9 4.032 9 9a8.96 8.96 0 01-1.969 5.617zm-2.006-.742A6.977 6.977 0 0018 11c0-3.868-3.133-7-7-7-3.868 0-7 3.132-7 7 0 3.867 3.132 7 7 7a6.977 6.977 0 004.875-1.975l.15-.15z"></path></svg>
+
                         </button>
                         <input type="text" name="query" className="w-full " placeholder="Search..." />
                         <Link href={"https://www.algolia.com/developers/?utm_source=devto&utm_medium=referral"} className="absolute text-xs flex flex-row items-center right-2 top-1 mt-2 opacity-75">Powered by

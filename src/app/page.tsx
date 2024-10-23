@@ -21,11 +21,12 @@ export default function Home() {
       return "Top";
     }
   }
+  const [show, setShow] = React.useState(false);
 
   return (
 
-    <div className="max-w-[1380px] mx-auto p-4 grid md:grid-cols-[2fr_5fr] lg:grid-cols-[240px_2fr_1fr] gap-5 text-sm">
-      <SideBar nav={false} />
+    <div className="max-w-[1380px] mx-auto p-0 md:p-2 lg:p-4 grid md:grid-cols-[2fr_5fr] lg:grid-cols-[240px_2fr_1fr] gap-5 text-sm">
+      <SideBar nav={false} show={show} setShow={setShow} />
       <div className="">
         <div className="flex justify-between items-center mb-3">
           <div className="text-base">

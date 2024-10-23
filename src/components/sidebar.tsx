@@ -1,16 +1,33 @@
 "use client";
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Billboard from './billboard';
 
-export default function SideBar({ nav }: { nav: boolean }) {
+export default function SideBar({ nav, show, setShow }: { nav: boolean, show: boolean, setShow: React.Dispatch<React.SetStateAction<boolean>> }) {
 
-    return <aside className={(nav ? "absolute md:hidden" : "hidden") + " md:static md:flex flex-col mb-4"}>
 
-        <ul className='text-base'>
+    function handleShow(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+        event.preventDefault();
+        setShow(!show);
+    }
+
+    if (!show && nav) {
+        return <></>
+    }
+    return <aside className={(nav ? "absolute z-[100] md:hidden bg-white left-0 top-0 max-w-[300px] w-[300px] h-screen" : "hidden") + " md:static md:flex flex-col mb-4"}>
+
+        {(nav ?
+            <div className='min-h-14 flex flex-row items-center justify-between pl-5 pr-2 bg-white'>
+                <h2 className='font-bold leading-tight text-lg'>DEV Community</h2>
+                <button className='btn-aside !p-2' onClick={(event) => handleShow(event)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-labelledby="a6j0cabj6dpvwgivhkcodsk7leskxe29" aria-hidden="true" className="crayons-icon c-btn__icon"><title id="a6j0cabj6dpvwgivhkcodsk7leskxe29">Close</title><path d="M12 10.586l4.95-4.95 1.414 1.414-4.95 4.95 4.95 4.95-1.414 1.414-4.95-4.95-4.95 4.95-1.414-1.414 4.95-4.95-4.95-4.95L7.05 5.636l4.95 4.95z"></path></svg>
+                </button>
+            </div> : null)}
+        <ul className={(nav ? "p-1 bg-white" : "") + ' text-base'}>
+
             <Link href={"/"}>
 
-                <li className='btn flex items-center'>
+                <li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="24" height="24" className='mr-2'>
                         <g className="nc-icon-wrapper">
                             <path fill="#A0041E" d="M13.344 18.702h-2a.5.5 0 01-.5-.5v-7a.5.5 0 01.5-.5h2a.5.5 0 01.5.5v7a.5.5 0 01-.5.5z"></path>
@@ -26,7 +43,7 @@ export default function SideBar({ nav }: { nav: boolean }) {
                     <span>Home</span>
                 </li>
             </Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg version="1.0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 166.000000 102.000000" width={24} height={24} preserveAspectRatio="xMidYMid meet" fill="#3b49df" className='mr-2'>
 
                     <g transform="translate(0.000000,102.000000) scale(0.100000,-0.100000)" fill="#3b49df" stroke="none">
@@ -41,7 +58,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                         </path>
                     </g>
                 </svg><span>Dev++</span></li></Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' viewBox="0 0 44 44" width="24" height="24">
                     <g className="nc-icon-wrapper">
                         <path fill="#67757F" d="M39 24c0 2.209-1.791 2-4 2H9c-2.209 0-4 .209-4-2l2-12c.125-1.917 1.791-4 4-4h22c2.209 0 3.791 2.208 4 4l2 12z"></path>
@@ -57,7 +74,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                         <path fill="#E1E8ED" d="M27 31a1 1 0 01-1 1h-8a1 1 0 01-1-1v-3a1 1 0 011-1h8a1 1 0 011 1v3z"></path>
                     </g>
                 </svg><span>Reading List</span></li ></Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' viewBox="0 0 44 44" width="24" height="24">
                     <g className="nc-icon-wrapper">
                         <path fill="#292F33" d="M10 19h24v2H10zm15 15c0 2.208-.792 4-3 4-2.209 0-3-1.792-3-4s.791-2 3-2c2.208 0 3-.208 3 2z"></path>
@@ -82,7 +99,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                     </g>
                 </svg>
                 <span>Podcasts</span></li></Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="24" height="24" className='mr-2'>
                     <g transform="translate(4 4)">
                         <path fill="#31373D" d="M34.074 18l-4.832 3H28v-4c0-.088-.02-.169-.026-.256C31.436 15.864 34 12.735 34 9a8 8 0 00-16.001 0c0 1.463.412 2.822 1.099 4H14.92c.047-.328.08-.66.08-1a7 7 0 10-14 0 6.995 6.995 0 004 6.317V29a4 4 0 004 4h15a4 4 0 004-4v-3h1.242l4.832 3H35V18h-.926zM28.727 3.977a5.713 5.713 0 012.984 4.961L28.18 8.35a2.276 2.276 0 00-.583-.982l1.13-3.391zm-.9 6.342l3.552.592a5.713 5.713 0 01-4.214 3.669 3.985 3.985 0 00-1.392-1.148l.625-2.19a2.425 2.425 0 001.429-.923zM26 3.285c.282 0 .557.027.828.067l-1.131 3.392c-.404.054-.772.21-1.081.446L21.42 5.592A5.703 5.703 0 0126 3.285zM20.285 9c0-.563.085-1.106.236-1.62l3.194 1.597-.002.023c0 .657.313 1.245.771 1.662L23.816 13h-1.871a5.665 5.665 0 01-1.66-4zm-9.088-.385A4.64 4.64 0 0112.667 12c0 .344-.043.677-.113 1H10.1c.145-.304.233-.641.233-1a2.32 2.32 0 00-.392-1.292l1.256-2.093zM8 7.333c.519 0 1.01.105 1.476.261L8.22 9.688c-.073-.007-.145-.022-.22-.022a2.32 2.32 0 00-1.292.392L4.615 8.803A4.64 4.64 0 018 7.333zM3.333 12c0-.519.105-1.01.261-1.477l2.095 1.257c-.007.073-.022.144-.022.22 0 .75.36 1.41.91 1.837a3.987 3.987 0 00-1.353 1.895C4.083 14.881 3.333 13.533 3.333 12z"></path>
@@ -92,7 +109,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                     </g>
                 </svg>
                 <span>Videos</span></li > </Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' viewBox="0 0 44 44" width="24" height="24">
                     <g className="nc-icon-wrapper">
                         <path fill="#FFD983" d="M36.017 24.181L21.345 9.746C20.687 9.087 19.823 9 18.96 9H8.883C7.029 9 6 10.029 6 11.883v10.082c0 .861.089 1.723.746 2.38L21.3 39.017a3.287 3.287 0 004.688 0l10.059-10.088c1.31-1.312 1.28-3.438-.03-4.748zm-23.596-8.76a1.497 1.497 0 11-2.118-2.117 1.497 1.497 0 012.118 2.117z"></path>
@@ -101,7 +118,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                     </g>
                 </svg>
                 <span>Tags</span></li ></Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' viewBox="0 0 44 44" width="24" height="24">
                     <g className="nc-icon-wrapper">
                         <path fill="#FFD983" d="M33 15.06c0 6.439-5 7.439-5 13.44 0 3.098-3.123 3.359-5.5 3.359-2.053 0-6.586-.779-6.586-3.361C15.914 22.5 11 21.5 11 15.06c0-6.031 5.285-10.92 11.083-10.92C27.883 4.14 33 9.029 33 15.06z"></path>
@@ -112,21 +129,21 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                     </g>
                 </svg>
                 <span>DEV Help</span></li ></Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' height={24} width={24} viewBox="0 0 36 36"><path fill="#F4900C" d="M11 0C6.582 0 3 3.582 3 8v8h2V8c0-3.313 2.687-6 6-6 3.314 0 6 2.687 6 6v8h2V8c0-4.418-3.582-8-8-8z"></path><path fill="#DD2E44" d="M1 8l2 2 2-2 2 2 2-2 2 2 2-2 2 2 2-2 2 2 2-2v23H1z"></path><path fill="#FFCC4D" d="M25 5c-4.418 0-8 3.582-8 8v8h2v-8c0-3.314 2.688-6 6-6 3.315 0 6 2.686 6 6v8h2v-8c0-4.418-3.582-8-8-8z"></path><path fill="#744EAA" d="M15 13l2 2 2-2 2 2 2-2 2 2 2-2 2 2 2-2 2 2 2-2v23H15z"></path></svg>
                 <span>Forem Shop</span></li ></Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' viewBox="0 0 44 44" width="24" height="24">
                     <path fill="#DD2E44" d="M39.885 15.833c0-5.45-4.418-9.868-9.867-9.868-3.308 0-6.227 1.633-8.018 4.129-1.791-2.496-4.71-4.129-8.017-4.129-5.45 0-9.868 4.417-9.868 9.868 0 .772.098 1.52.266 2.241C5.751 26.587 15.216 35.568 22 38.034c6.783-2.466 16.249-11.447 17.617-19.959.17-.721.268-1.469.268-2.242z"></path>
                 </svg>
                 <span>Advertise on DEV</span></li ></Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' height={24} width={24} viewBox="0 0 36 36"><path fill="#FFAC33" d="M5.123 5h6C12.227 5 13 4.896 13 6V4c0-1.104-.773-2-1.877-2h-8c-2 0-3.583 2.125-3 5 0 0 1.791 9.375 1.917 9.958C2.373 18.5 4.164 20 6.081 20h6.958c1.105 0-.039-1.896-.039-3v-2c0 1.104-.773 2-1.877 2h-4c-1.104 0-1.833-1.042-2-2S3.539 7.667 3.539 7.667C3.206 5.75 4.018 5 5.123 5zm25.812 0h-6C23.831 5 22 4.896 22 6V4c0-1.104 1.831-2 2.935-2h8c2 0 3.584 2.125 3 5 0 0-1.633 9.419-1.771 10-.354 1.5-2.042 3-4 3h-7.146C21.914 20 22 18.104 22 17v-2c0 1.104 1.831 2 2.935 2h4c1.104 0 1.834-1.042 2-2s1.584-7.333 1.584-7.333C32.851 5.75 32.04 5 30.935 5zM20.832 22c0-6.958-2.709 0-2.709 0s-3-6.958-3 0-3.291 10-3.291 10h12.292c-.001 0-3.292-3.042-3.292-10z"></path><path fill="#FFCC4D" d="M29.123 6.577c0 6.775-6.77 18.192-11 18.192-4.231 0-11-11.417-11-18.192 0-5.195 1-6.319 3-6.319 1.374 0 6.025-.027 8-.027l7-.001c2.917-.001 4 .684 4 6.347z"></path><path fill="#C1694F" d="M27 33c0 1.104.227 2-.877 2h-16C9.018 35 9 34.104 9 33v-1c0-1.104 1.164-2 2.206-2h13.917c1.042 0 1.877.896 1.877 2v1z"></path><path fill="#C1694F" d="M29 34.625c0 .76.165 1.375-1.252 1.375H8.498C7.206 36 7 35.385 7 34.625v-.25C7 33.615 7.738 33 8.498 33h19.25c.759 0 1.252.615 1.252 1.375v.25z"></path></svg>
                 <span>DEV Challenges</span></li ></Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' height={24} width={24} viewBox="0 0 36 36"><path fill="#FFAC33" d="M34.347 16.893l-8.899-3.294-3.323-10.891c-.128-.42-.517-.708-.956-.708-.439 0-.828.288-.956.708l-3.322 10.891-8.9 3.294c-.393.146-.653.519-.653.938 0 .418.26.793.653.938l8.895 3.293 3.324 11.223c.126.424.516.715.959.715.442 0 .833-.291.959-.716l3.324-11.223 8.896-3.293c.391-.144.652-.518.652-.937 0-.418-.261-.792-.653-.938z"></path><path fill="#FFCC4D" d="M14.347 27.894l-2.314-.856-.9-3.3c-.118-.436-.513-.738-.964-.738-.451 0-.846.302-.965.737l-.9 3.3-2.313.856c-.393.145-.653.52-.653.938 0 .418.26.793.653.938l2.301.853.907 3.622c.112.444.511.756.97.756.459 0 .858-.312.97-.757l.907-3.622 2.301-.853c.393-.144.653-.519.653-.937 0-.418-.26-.793-.653-.937zM10.009 6.231l-2.364-.875-.876-2.365c-.145-.393-.519-.653-.938-.653-.418 0-.792.26-.938.653l-.875 2.365-2.365.875c-.393.146-.653.52-.653.938 0 .418.26.793.653.938l2.365.875.875 2.365c.146.393.52.653.938.653.418 0 .792-.26.938-.653l.875-2.365 2.365-.875c.393-.146.653-.52.653-.938 0-.418-.26-.792-.653-.938z"></path></svg>
                 <span>DEV Showcase</span></li ></Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg id="Layer_1" className='mr-2' data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" height={24} width={24} viewBox="0 0 864 864">
                     <defs>
 
@@ -145,7 +162,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                     </g>
                 </svg>
                 <span>About</span></li ></Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="24" height="24" className='mr-2'>
                     <g className="nc-icon-wrapper">
                         <path fill="#FFAC33" d="M38.724 33.656c-1.239-.01-1.241 1.205-1.241 1.205H22.5c-5.246 0-9.5-4.254-9.5-9.5s4.254-9.5 9.5-9.5 9.5 4.254 9.5 9.5c0 3.062-1.6 5.897-3.852 7.633h5.434C35.022 30.849 36 28.139 36 25.361c0-7.456-6.045-13.5-13.5-13.5-7.456 0-13.5 6.044-13.5 13.5 0 7.455 6.044 13.5 13.5 13.5h14.982s-.003 1.127 1.241 1.139c1.238.012 1.228-1.245 1.228-1.245l.014-3.821s.001-1.267-1.241-1.278zM9 18.26a16.047 16.047 0 014-4.739V13c0-5 5-7 5-8s-1-1-1-1H5C4 4 4 5 4 5c0 1 5 3.333 5 7.69v5.57z"></path>
@@ -155,7 +172,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                 </svg>
                 <span>Contact</span></li ></Link>
 
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg xmlns="http://www.w3.org/2000/svg" height={24} width={24} className='mr-2' version="1.1" viewBox="0 0 47.5 47.5" id="svg2"><defs id="defs6"><clipPath id="clipPath18"><path d="M 0,38 38,38 38,0 0,0 0,38 z" id="path20"></path></clipPath></defs><g transform="matrix(1.25,0,0,-1.25,0,47.5)" id="g12"><g id="g14"><g clip-path="url(#clipPath18)" id="g16"><g transform="translate(33,30)" id="g22">
                     <path d="m 0,0 -28,0 c -2.209,0 -4,-1.791 -4,-4 l 0,-15 c 0,-2.209 1.791,-4 4,-4 l 11.416,0 c 0.52,-0.596 1.477,-1 2.584,-1 1.107,0 2.064,0.404 2.584,1 L 0,-23 c 2.209,0 4,1.791 4,4 L 4,-4 C 4,-1.791 2.209,0 0,0" id="path24" style={{ fill: "#226699", fillOpacity: 1, fillRule: "nonzero", stroke: "none" }}></path></g><g transform="translate(21,10)" id="g26">
                         <path d="m 0,0 c 0,-1.104 -0.896,-2 -2,-2 -1.104,0 -2,0.896 -2,2 l 0,18 c 0,1.104 0.896,2 2,2 1.104,0 2,-0.896 2,-2 L 0,0 z" id="path28" style={{ fill: "#292f33", fillOpacity: 1, fillRule: 'nonzero', stroke: "none" }}>
@@ -178,7 +195,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                 </g>
                 </svg>
                 <span>Guides</span></li ></Link>
-            <Link href={"/"}><li className='btn flex items-center'>
+            <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                 <svg className="mr-2" xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 45 45" version="1.1" id="svg2"><metadata id="metadata8">
                 </metadata><defs id="defs6">
                         <clipPath id="clipPath16" clipPathUnits="userSpaceOnUse">
@@ -206,10 +223,10 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
             </Link>
         </ul >
 
-        <div className="mb-4">
+        <div className={(nav ? "p-1 bg-white" : "") + " mb-4"}>
             <h2 className="pl-4 py-2 font-bold">Other</h2>
             <ul className='text-base'>
-                <Link href={"/"}><li className='btn flex items-center'>
+                <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                     <svg className='mr-2' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="24" height="24">
                         <g className="nc-icon-wrapper">
                             <path fill="#FFDB5E" d="M38.956 21.916c0-.503-.12-.975-.321-1.404-1.341-4.326-7.619-4.01-16.549-4.221-1.493-.035-.639-1.798-.115-5.668.341-2.517-1.282-6.382-4.01-6.382-4.498 0-.171 3.548-4.148 12.322-2.125 4.688-6.875 2.062-6.875 6.771v10.719c0 1.833.18 3.595 2.758 3.885 2.499.281 1.937 2.062 5.542 2.062h18.044a3.337 3.337 0 003.333-3.334c0-.762-.267-1.456-.698-2.018 1.02-.571 1.72-1.649 1.72-2.899 0-.76-.266-1.454-.696-2.015 1.023-.57 1.725-1.649 1.725-2.901 0-.909-.368-1.733-.961-2.336a3.311 3.311 0 001.251-2.581z"></path>
@@ -221,7 +238,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                 </li >
                 </Link>
                 <Link href={"/"}>
-                    <li className='btn flex items-center'>
+                    <li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                         <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' viewBox="0 0 44 44" width="24" height="24">
                             <g transform="translate(4 4)">
                                 <circle fill="#FFCC4D" cx="18" cy="18" r="18"></circle>
@@ -238,7 +255,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                     </li >
                 </Link>
                 <Link href={"/"}>
-                    <li className='btn flex items-center'>
+                    <li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
                         <svg className='mr-2' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="24" height="24">
                             <g transform="translate(4 4)">
                                 <ellipse fill="#F5F8FA" cx="8.828" cy="18" rx="7.953" ry="13.281"></ellipse>
@@ -258,7 +275,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
             </ul>
         </div>
 
-        <div className="mb-4 flex justify-start">
+        <div className={(nav ? "p-1 bg-white" : "") + " mb-4 flex justify-start"}>
             <Link href={"/"} className='p-2'>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style={{ paddingBottom: "2px" }} role="img" aria-labelledby="adovcqcamj59bpuso3zedhxgocx8j1m1" ><title id="adovcqcamj59bpuso3zedhxgocx8j1m1">Twitter</title>
                     <g id="surface1">
