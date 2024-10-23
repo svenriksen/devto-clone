@@ -25,7 +25,7 @@ export default function Home() {
   return (
 
     <div className="max-w-[1380px] mx-auto p-4 grid md:grid-cols-[2fr_5fr] lg:grid-cols-[240px_2fr_1fr] gap-5 text-sm">
-      <SideBar />
+      <SideBar nav={false} />
       <div className="">
         <div className="flex justify-between items-center mb-3">
           <div className="text-base">

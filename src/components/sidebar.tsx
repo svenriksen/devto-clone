@@ -3,17 +3,9 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import Billboard from './billboard';
 
-export default function SideBar() {
-    const isHamburgerClicked = false;
+export default function SideBar({ nav }: { nav: boolean }) {
 
-    console.log(isHamburgerClicked);
-    const [isHamburger, setHamburger] = useState(isHamburgerClicked);
-
-    useEffect(() => {
-        setHamburger(isHamburgerClicked);
-    }, [isHamburgerClicked]);
-
-    return <aside className={(isHamburger ? "absolute" : "absolute hidden") + " md:static md:flex flex-col mb-4"}>
+    return <aside className={(nav ? "absolute md:hidden" : "hidden") + " md:static md:flex flex-col mb-4"}>
 
         <ul className='text-base'>
             <Link href={"/"}>
@@ -303,7 +295,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
             </Link>
         </div>
 
-        <Billboard isClicked={false} title={"Dev Diamond Sponsors"} className="border-2 border-black border-solid">
+        <Billboard isClicked={false} title={"Dev Diamond Sponsors"} className={(nav ? "hidden" : "block") + " border-2 border-black border-solid"}>
             <div>
                 <h1 className='my-2 font-bold'>Thank you to our Diamond Sponsor Neon</h1>
                 <p className='my-2'>Neon is the official database partner of DEV</p>
@@ -311,14 +303,14 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
             </div>
         </Billboard>
 
-        <Billboard isClicked={false} title={"Dev Diamond Sponsors"} className='mt-6'>
+        <Billboard isClicked={false} title={"Dev Diamond Sponsors"} className={(nav ? "hidden" : "block") + ' mt-6'}>
             <div>
                 <h1 className='text-lg my-2 font-bold'>Life is too short to browse without dark mode.</h1>
                 <p className='my-2'>You can customize your theme, font, and more when you are signed in</p>
             </div>
         </Billboard>
 
-        <footer className={(isHamburgerClicked ? "hidden" : "block") + " md:block mt-6 text-[0.875em]"}>
+        <footer className={(nav ? "hidden" : "block") + " md:block mt-6 text-[0.875em]"}>
             <p>
                 <a className="font-medium text-[rgba(59,73,223)] hover:underline" aria-label="DEV Community Home" href="/">DEV Community </a>
                 A constructive and inclusive social network for software developers. With you every step of your journey.

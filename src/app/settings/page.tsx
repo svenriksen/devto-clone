@@ -11,7 +11,12 @@ export default function Settings() {
     const { data: session } = useSession();
 
     const [isClicked, setIsClicked] = React.useState([true, false, false, false, false, false]);
+    const user = api.profile.getProfile.useQuery(session?.user.id ?? "").data;
 
+
+    if (!session) {
+        navigate('login').catch(console.error);
+    }
 
     function checkClick(index: number) {
         return () => {
@@ -27,6 +32,11 @@ export default function Settings() {
 
     if (!session) {
         navigate('login').catch(console.error);
+    }
+
+    function onSubmit(formData: FormData) {
+        const data = Object.fromEntries(formData.entries());
+        console.log(data);
     }
 
     return <>
@@ -79,14 +89,36 @@ export default function Settings() {
                         <span>Extensions</span>
                     </button>
                 </div>
-                <div className=''>
+                <form className=''>
                     {(isClicked[0]) ? <div>
-                        <Link href={session?.user.id ?? ""} className="text-2xl md:text-3xl font-bold">{session?.user.name}</Link>
-                        <div className='bg-white rounded-lg p-4'>
+                        <Link href={session?.user.id ?? ""} className="text-2xl mb-4 md:mb-6 text-[rgb(59,73,223)] md:text-3xl font-bold">@{session?.user.name}</Link>
+                        <div className='bg-white rounded-lg p-4 md:p-6 mb-4 md:mb-6 grid gap-4 md:gap-6'>
+                            <h1 className='font-bold text-lg'>User</h1>
+                            <div className='flex flex-col'>
+                                <label htmlFor="Name">Name</label>
+                                <input type="text" value={user?.name ?? ""} className='mt-2 p-2 border-solid border-[1.5px] border-[rgb(212,212,212)] rounded-lg focus:border-[rgb(59,73,223)]' required />
+                            </div>
+                            <div className='flex flex-col'>
+                                <label htmlFor="Email">Email</label>
+                                <input type="email" value={user?.email ?? ""} className='mt-2 p-2  border-solid border-[1.5px] border-[rgb(212,212,212)] rounded-lg focus:border-[rgb(59,73,223)]' required />
+                            </div>
 
+                            <div className='flex flex-col'>
+                                <label htmlFor="Username">Username</label>
+                                <input type="text" value={user?.id ?? ""} className='mt-2 p-2  border-solid border-[1.5px] border-[rgb(212,212,212)] rounded-lg focus:border-[rgb(59,73,223)]' required />
+                            </div>
+                            <div className='flex flex-col'>
+                                <label htmlFor="Bio">Bio</label>
+                                <textarea value={user?.bio ?? ""} placeholder='A short bio..' className='mt-2 p-2 border-solid border-[1.5px] border-[rgb(212,212,212)] rounded-lg focus:border-[rgb(59,73,223)]' required />
+                            </div>
+                        </div>
+                        <div className='bg-white rounded-lg p-4 md:p-6 mb-4 md:mb-6 grid gap-4 md:gap-6'>
+                            <button className='btn font-medium mr-2 !bg-[rgb(59,73,223)] !text-white hover:!bg-[rgb(47,58,178)]'>
+                                Save Profile Information
+                            </button>
                         </div>
                     </div> : null}
-                </div>
+                </form>
             </div>
         </div>
     </>

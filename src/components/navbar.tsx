@@ -5,6 +5,7 @@ import Icon from "/public/icon.png";
 // import SearchIcon from "/public/search.svg";
 import { type FormEvent, useState } from "react";
 import { useSession } from "next-auth/react";
+import SideBar from "./sidebar";
 
 
 
@@ -45,6 +46,7 @@ function Navbar() {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z" />
                         </svg>
                     </button>
+                    <SideBar nav={true} />
                     <Link href="/">
                         <Image src={Icon} alt="" width={0} height={0} style={{ width: "auto", height: "40px" }} />
                     </Link>
