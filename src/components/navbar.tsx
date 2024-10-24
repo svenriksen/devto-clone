@@ -6,6 +6,7 @@ import Icon from "/public/icon.png";
 import { type FormEvent, useState } from "react";
 import { useSession } from "next-auth/react";
 import SideBar from "./sidebar";
+import { navigate } from "@/app/actions";
 
 
 
@@ -21,6 +22,7 @@ function Navbar() {
     function handleSearch(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
+        navigate("search?q=" + (data.get("query") as string)).catch(console.error);
         console.log(data.get("query"));
     }
 

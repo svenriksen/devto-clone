@@ -112,4 +112,9 @@ export const postRouter = createTRPCRouter({
     return await ctx.db.comment.delete({ where: { id: input.id } });
   }),
 
+  searchPosts: publicProcedure.input(z.object({ query: z.string() })).query(async ({ ctx, input }) => {
+
+    return await ctx.db.post.findMany({ where: { title: { contains: input.query } } });
+  }),
+
 });
