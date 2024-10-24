@@ -2,15 +2,16 @@
 import { navigate } from "@/app/actions";
 import Comment from "@/components/comment";
 import CommentBox from "@/components/commentbox";
+import Loading from "@/components/loading";
 import { api } from "@/trpc/react";
 import { Tooltip } from "@nextui-org/tooltip";
 import { useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-
-export default function Post({ params }: { params: { userId: string, postId: string } }) {
+function Post({ params }: { params: { userId: string, postId: string } }) {
     const { data: session } = useSession();
     const post = api.post.getPostById.useQuery({ id: params.postId });
     const user = api.profile.getProfile.useQuery(post.data?.createdById ?? "", { enabled: !!post.data?.createdById }).data;
@@ -109,43 +110,51 @@ export default function Post({ params }: { params: { userId: string, postId: str
                     </div>
                 </aside >
                 <div className="bg-white rounded-lg pb-8">
-                    {(post.data?.coverImage !== null && post.data?.coverImage.replace("data:application/octet-stream;base64,", "").trim() !== "") ? <Image alt="" src={post.data?.coverImage ?? ""} style={{ borderTopLeftRadius: "0.375rem", borderTopRightRadius: "0.375rem" }} width={2000} height={2000} />
-                        : null}
-                    <div className="pt-8 px-12 relative md:px-16">
+                    <Suspense fallback={<Loading />}>
+                        {(post.data?.coverImage !== null && post.data?.coverImage.replace("data:application/octet-stream;base64,", "").trim() !== "") ? <Image alt="" src={post.data?.coverImage ?? ""} style={{ borderTopLeftRadius: "0.375rem", borderTopRightRadius: "0.375rem" }} width={2000} height={2000} />
+                            : null}
+                    </Suspense>
+                    <Suspense fallback={<Loading />}>
 
-                        <Link href={`${user?.id}`} className="py-3 relative">
-                            <div className="absolute w-8 h-8 -left-10 top-0 rounded-full">
-                                <Image alt="" src={user?.image ?? ""} width={1000} height={1000} className="w-full max-w-screen-xl h-auto rounded-full" />
-                            </div>
-                            <div className="flex items-start justify-between">
-                                <div>
-                                    <div className="font-medium text-base">{user?.name}</div>
-                                    <div className="text-xs text-[rgb(82,82,82)] mb-5">{post.data?.createdAt.toUTCString()}</div>
+                        <div className="pt-8 px-12 relative md:px-16">
+
+                            <Link href={`${user?.id}`} className="py-3 relative">
+                                <div className="absolute w-8 h-8 -left-10 top-0 rounded-full">
+                                    <Image alt="" src={user?.image ?? ""} width={1000} height={1000} className="w-full max-w-screen-xl h-auto rounded-full" />
                                 </div>
-                                {(session?.user.id === post.data?.createdById ? <button onClick={(event) => {
-                                    event.preventDefault();
-                                    temp.mutate({ id: post.data?.id ?? "" });
-                                    navigate("/").catch(console.error);
-                                }} className="absolute -right-7 px-2 py-2 border-[1px] text-sm md:text-base border-solid border-red-500 rounded-lg text-red-500 hover:bg-red-300">Delete</button> : null)}
+                                <div className="flex items-start justify-between">
+                                    <div>
+                                        <div className="font-medium text-base">{user?.name}</div>
+                                        <div className="text-xs text-[rgb(82,82,82)] mb-5">{post.data?.createdAt.toUTCString()}</div>
+                                    </div>
+                                    {(session?.user.id === post.data?.createdById ? <button onClick={(event) => {
+                                        event.preventDefault();
+                                        temp.mutate({ id: post.data?.id ?? "" });
+                                        navigate("/").catch(console.error);
+                                    }} className="absolute -right-7 px-2 py-2 border-[1px] text-sm md:text-base border-solid border-red-500 rounded-lg text-red-500 hover:bg-red-300">Delete</button> : null)}
+
+                                </div>
+                            </Link>
+
+                            <h1 className="text-4xl lg:text-5xl font-bold mb-2 leading-tight">{post.data?.title}</h1>
+
+                            <div className="pb-4">
+                                {post.data?.tags.map((tag, index) => {
+                                    return <Link href={"/"} key={index} className="text-sm btn !px-2 !py-1 mr-2 border-[1px] border-transparent !bg-white hover:!bg-[rgba(59,73,223)]/25 hover:border-[rgba(59,73,223)] hover:border-[1px] hover:border-solid transition duration-300">
+                                        <span className="text-[rgba(59,73,223)]">#</span>{tag}
+                                    </Link>
+                                })}
+                            </div>
+                        </div>
+                    </Suspense>
+
+                    <Suspense fallback={<Loading />}>
+                        <div className="pt-8 px-12 relative md:px-16 pb-8">
+                            <div dangerouslySetInnerHTML={{ __html: post.data?.content ?? "" }} style={{ all: "initial" }} className="prose">
 
                             </div>
-                        </Link>
-
-                        <h1 className="text-4xl lg:text-5xl font-bold mb-2 leading-tight">{post.data?.title}</h1>
-
-                        <div className="pb-4">
-                            {post.data?.tags.map((tag, index) => {
-                                return <Link href={"/"} key={index} className="text-sm btn !px-2 !py-1 mr-2 border-[1px] border-transparent !bg-white hover:!bg-[rgba(59,73,223)]/25 hover:border-[rgba(59,73,223)] hover:border-[1px] hover:border-solid transition duration-300">
-                                    <span className="text-[rgba(59,73,223)]">#</span>{tag}
-                                </Link>
-                            })}
                         </div>
-                    </div>
-                    <div className="pt-8 px-12 relative md:px-16 pb-8">
-                        <div dangerouslySetInnerHTML={{ __html: post.data?.content ?? "" }} style={{ all: "initial" }} className="prose">
-
-                        </div>
-                    </div>
+                    </Suspense>
                     <div className="mb-4 border-t-[1px] border-solid border-black/10 py-8 px-12 md:px-16">
                         <div className="mb-6 flex items-center justify-between">
                             <div className="font-bold text-2xl">Top comments { }</div>
@@ -159,7 +168,7 @@ export default function Post({ params }: { params: { userId: string, postId: str
 
                             {session?.user ? (formFocus ?
                                 < CommentBox post={{ id: post.data?.id ?? "" }} /> :
-                                <div className='text-sm pb-3 flex items-start pl-3 mr-3'>
+                                <div className='text-sm pb-3 flex items-start pl-3'>
                                     {(session.user.image) ? <Image src={session.user.image} alt="" width={1000} height={1000} className='mr-2 w-8 h-auto rounded-full' /> :
                                         <div className='mr-2 w-8 h-8 bg-black/10 rounded-full'></div>}
                                     <textarea className="w-full h-28 border-solid border-[1px] border-black/40 rounded-lg p-2" placeholder="Add to the discussion" >
@@ -169,7 +178,7 @@ export default function Post({ params }: { params: { userId: string, postId: str
                         </div>
 
                         {(comments?.map((comment, index) => {
-                            return <Comment commentid={comment.id} userid={user?.id ?? ""} preview={false} key={index} />;
+                            return <Comment commentid={comment.id} userid={comment.createdById ?? ""} preview={false} key={index} />;
                         })
                         )}
                     </div>
@@ -207,3 +216,5 @@ export default function Post({ params }: { params: { userId: string, postId: str
         </>
     );
 }
+
+export default dynamic(() => Promise.resolve(Post), { ssr: false })

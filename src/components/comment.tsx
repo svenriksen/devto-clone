@@ -22,7 +22,7 @@ export default function Comment({ commentid, userid, preview }: { commentid: str
 
     if (preview) {
         return (
-            <div className='text-sm pb-3 flex flex-row items-start px-3  w-full'>
+            <div className='text-sm pb-3 flex flex-row items-start px-3 w-full'>
                 {(user?.image) ? <Image src={user?.image} alt="" width={1000} height={1000} className='mr-2 w-8 h-auto rounded-full' /> :
                     <div className='mr-2 w-8 h-8 bg-black/10 rounded-full'></div>}
 
@@ -46,7 +46,7 @@ export default function Comment({ commentid, userid, preview }: { commentid: str
     }
     else {
         return (
-            <div className='text-sm flex items-start pl-3 mr-3 mb-6'>
+            <div className='text-sm flex items-start pl-3 mb-6'>
                 {(user?.image) ? <Image src={user?.image} alt="" width={1000} height={1000} className='mr-2 w-8 h-auto rounded-full' /> :
                     <div className='mr-2 w-8 h-8 bg-black/10 rounded-full'></div>}
                 <div className='w-full bg-white rounded-lg border-[1px] border-black/10 border-solid'>

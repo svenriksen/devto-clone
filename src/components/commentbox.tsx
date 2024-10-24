@@ -36,7 +36,7 @@ export default function CommentBox({ post }
     }
 
     return <div>
-        <div className='text-sm pb-3 flex items-start pl-3 mr-3'>
+        <div className='text-sm pb-3 flex items-start pl-3'>
 
             {(session.user.image) ? <Image src={session.user.image} alt="" width={1000} height={1000} className='mr-2 w-8 h-auto rounded-full' /> :
                 <div className='mr-2 w-8 h-8 bg-black/10 rounded-full'></div>}

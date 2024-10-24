@@ -6,6 +6,8 @@ import SessionProvider from "@/util/SessionProvider";
 
 import { getServerAuthSession } from "@/server/auth";
 import { TRPCReactProvider } from "@/trpc/react";
+import Loading from "@/components/loading";
+import { Suspense } from "react";
 
 // import { HamburgerClicked } from "@/util/context";
 
@@ -27,9 +29,10 @@ export default async function RootLayout({
       >
         <TRPCReactProvider>
           <SessionProvider session={session}>
-            <Navbar />
-            {children}
-
+            <Suspense fallback={<Loading />}>
+              <Navbar />
+              {children}
+            </Suspense>
           </SessionProvider>
         </TRPCReactProvider>
       </body>
