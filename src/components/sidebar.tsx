@@ -173,7 +173,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                 <span>Contact</span></li ></Link>
 
             <Link href={"/"}><li className={(nav ? 'btn-aside' : 'btn') + ' flex items-center'}>
-                <svg xmlns="http://www.w3.org/2000/svg" height={24} width={24} className='mr-2' version="1.1" viewBox="0 0 47.5 47.5" id="svg2"><defs id="defs6"><clipPath id="clipPath18"><path d="M 0,38 38,38 38,0 0,0 0,38 z" id="path20"></path></clipPath></defs><g transform="matrix(1.25,0,0,-1.25,0,47.5)" id="g12"><g id="g14"><g clip-path="url(#clipPath18)" id="g16"><g transform="translate(33,30)" id="g22">
+                <svg xmlns="http://www.w3.org/2000/svg" height={24} width={24} className='mr-2' version="1.1" viewBox="0 0 47.5 47.5" id="svg2"><defs id="defs6"><clipPath id="clipPath18"><path d="M 0,38 38,38 38,0 0,0 0,38 z" id="path20"></path></clipPath></defs><g transform="matrix(1.25,0,0,-1.25,0,47.5)" id="g12"><g id="g14"><g clipPath="url(#clipPath18)" id="g16"><g transform="translate(33,30)" id="g22">
                     <path d="m 0,0 -28,0 c -2.209,0 -4,-1.791 -4,-4 l 0,-15 c 0,-2.209 1.791,-4 4,-4 l 11.416,0 c 0.52,-0.596 1.477,-1 2.584,-1 1.107,0 2.064,0.404 2.584,1 L 0,-23 c 2.209,0 4,1.791 4,4 L 4,-4 C 4,-1.791 2.209,0 0,0" id="path24" style={{ fill: "#226699", fillOpacity: 1, fillRule: "nonzero", stroke: "none" }}></path></g><g transform="translate(21,10)" id="g26">
                         <path d="m 0,0 c 0,-1.104 -0.896,-2 -2,-2 -1.104,0 -2,0.896 -2,2 l 0,18 c 0,1.104 0.896,2 2,2 1.104,0 2,-0.896 2,-2 L 0,0 z" id="path28" style={{ fill: "#292f33", fillOpacity: 1, fillRule: 'nonzero', stroke: "none" }}>
                         </path>
@@ -202,7 +202,7 @@ c32 20 52 41 67 72 21 43 22 54 19 374 l-3 330 -31 39 c-61 76 -30 73 -669 73
                             <path id="path18" d="M 0,36 36,36 36,0 0,0 0,36 Z"></path>
                         </clipPath>
                     </defs>
-                    <g transform="matrix(1.25,0,0,-1.25,0,45)" id="g10"><g id="g12"><g clip-path="url(#clipPath16)" id="g14">
+                    <g transform="matrix(1.25,0,0,-1.25,0,45)" id="g10"><g id="g12"><g clipPath="url(#clipPath16)" id="g14">
                         <g transform="translate(2,20)" id="g20"><path id="path22" style={{ fill: "#ffcc4d", fillOpacity: 1, fillRule: 'nonzero', stroke: "none" }} d="m 0,0 c 0,-8.837 7.164,-16 16,-16 8.837,0 16,7.163 16,16 C 32,8.836 24.837,16 16,16 7.164,16 0,8.836 0,0">
                         </path>
                         </g>

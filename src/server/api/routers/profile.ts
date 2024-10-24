@@ -45,7 +45,23 @@ export const profileRouter = createTRPCRouter({
         });
     }),
 
-    updateProfile: protectedProcedure.input(z.string()).mutation(({ ctx, input }) => {
-        return null;
+    updateProfile: protectedProcedure.input(z.object({
+        name: z.string(),
+        bio: z.string(),
+        username: z.string(),
+        email: z.string(),
+    })).mutation(({ ctx, input }) => {
+
+        return ctx.db.user.update({
+            where: {
+                id: ctx.session.user.id,
+            },
+            data: {
+                name: input.name,
+                bio: input.bio,
+                id: input.username,
+                email: input.email,
+            },
+        });
     }),
 });

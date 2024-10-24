@@ -9,9 +9,10 @@ import { redirect, usePathname, useRouter } from 'next/navigation';
 import { navigate } from '@/app/actions';
 
 
-export default function CommentBox({ post }
+export default function CommentBox({ post, subComment }
     : {
         post: { id: string },
+        subComment?: boolean
     }) {
     const router = useRouter();
     const path = usePathname();
@@ -19,7 +20,23 @@ export default function CommentBox({ post }
     const [content, setContent] = React.useState("");
     const [mkdwn, setMkdwn] = React.useState("");
 
-    const postMutation = api.post.createComment.useMutation();
+    const postMutation = api.post.createComment.useMutation({
+        onSuccess: () => {
+            console.log('success');
+            // navigate(path.substring(1)).catch(console.error);
+            window.location.reload();
+            router.refresh();
+        }
+    });
+
+    const replyCommentMutation = api.comment.replyComment.useMutation({
+        onSuccess: () => {
+            console.log('success');
+            // navigate(path.substring(1)).catch(console.error);
+            window.location.reload();
+            router.refresh();
+        }
+    });
 
 
     if (!session) {
@@ -27,16 +44,22 @@ export default function CommentBox({ post }
     }
     function submitForm(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 
-        postMutation.mutateAsync({ content: mkdwn, postId: post.id }).catch(console.error);
+        if (subComment === true) {
+            replyCommentMutation.mutateAsync({ content: mkdwn, commentId: post.id }).catch(console.error);
+        }
+        else {
+            postMutation.mutateAsync({ content: mkdwn, postId: post.id }).catch(console.error);
+
+        }
         console.log(path.substring(1));
-        navigate(path.substring(1)).catch(console.error);
         // window.location.reload();
+        // navigate(path.substring(1)).catch(console.error);
         router.refresh();
         // redirect(`/${session?.user.id}/${post.id}`);
     }
 
     return <div>
-        <div className='text-sm pb-3 flex items-start pl-3'>
+        <div className='text-sm pb-3 flex items-start'>
 
             {(session.user.image) ? <Image src={session.user.image} alt="" width={1000} height={1000} className='mr-2 w-8 h-auto rounded-full' /> :
                 <div className='mr-2 w-8 h-8 bg-black/10 rounded-full'></div>}

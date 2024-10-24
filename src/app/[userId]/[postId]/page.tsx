@@ -130,7 +130,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                                     {(session?.user.id === post.data?.createdById ? <button onClick={(event) => {
                                         event.preventDefault();
                                         temp.mutate({ id: post.data?.id ?? "" });
-                                        navigate("/").catch(console.error);
+                                        navigate("").catch(console.error);
                                     }} className="absolute -right-7 px-2 py-2 border-[1px] text-sm md:text-base border-solid border-red-500 rounded-lg text-red-500 hover:bg-red-300">Delete</button> : null)}
 
                                 </div>
@@ -168,7 +168,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
 
                             {session?.user ? (formFocus ?
                                 < CommentBox post={{ id: post.data?.id ?? "" }} /> :
-                                <div className='text-sm pb-3 flex items-start pl-3'>
+                                <div className='text-sm pb-3 flex items-start'>
                                     {(session.user.image) ? <Image src={session.user.image} alt="" width={1000} height={1000} className='mr-2 w-8 h-auto rounded-full' /> :
                                         <div className='mr-2 w-8 h-8 bg-black/10 rounded-full'></div>}
                                     <textarea className="w-full h-28 border-solid border-[1px] border-black/40 rounded-lg p-2" placeholder="Add to the discussion" >

@@ -34,15 +34,18 @@ model Post {
 
 model Comment {
     id        String  @id @default(cuid())
+    subId     String?
     content   String
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
     createdBy   User   @relation(fields: [createdById], references: [id])
     createdById String
-    Post        Post   @relation(fields: [postId], references: [id])
-    postId      String
+    Post        Post?   @relation(fields: [postId], references: [id])
+    postId      String?
     likesComment LikeComment[]
+    comments    Comment[] @relation("ParentComment")
+    parent      Comment? @relation("ParentComment", fields: [subId], references: [id])
 }
 
 model Reaction {
