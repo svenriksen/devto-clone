@@ -1,13 +1,16 @@
 "use client";
 import { navigate } from "@/app/actions";
-import Comment from "@/components/comment";
-import CommentBox from "@/components/commentbox";
+// import Comment from "@/components/comment";
+// import CommentBox from "@/components/commentbox";
+const Comment = dynamic(() => import("@/components/comment"), { ssr: false, loading: () => <Loading /> });
+const CommentBox = dynamic(() => import("@/components/commentbox"), { ssr: false, loading: () => <Loading /> });
 import Loading from "@/components/loading";
 import { api } from "@/trpc/react";
 import { Tooltip } from "@nextui-org/tooltip";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
-import Image from "next/image";
+// import Image from "next/image";
+const Image = dynamic(() => import("next/image"), { ssr: false });
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 
@@ -110,11 +113,11 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                     </div>
                 </aside >
                 <div className="bg-white rounded-lg pb-8">
-                    <Suspense fallback={<Loading />}>
+                    <Suspense key={post.data?.coverImage} fallback={<Loading />}>
                         {(post.data?.coverImage !== null && post.data?.coverImage.replace("data:application/octet-stream;base64,", "").trim() !== "") ? <Image alt="" src={post.data?.coverImage ?? ""} style={{ borderTopLeftRadius: "0.375rem", borderTopRightRadius: "0.375rem" }} width={2000} height={2000} />
                             : null}
                     </Suspense>
-                    <Suspense fallback={<Loading />}>
+                    <Suspense key={user?.id} fallback={<Loading />}>
 
                         <div className="pt-8 px-12 relative md:px-16">
 

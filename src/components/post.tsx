@@ -3,8 +3,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { navigate } from "@/app/actions";
 import { api } from "@/trpc/react";
-import React from "react";
-import Comment from "./comment";
+import React, { Suspense } from "react";
+// import Comment from "./comment";
+const Comment = dynamic(() => import("@/components/comment"), { ssr: false, loading: () => <Loading /> });
+
+import Loading from "./loading";
+import dynamic from "next/dynamic";
 
 
 export default function Post({
@@ -75,8 +79,10 @@ export default function Post({
     }
 
     return <div className="mb-4">
-        {(post.coverImage!.length < 32) ? <Image className="object-cover w-full h-32 object-center" style={{ borderTopRightRadius: "0.375rem", borderTopLeftRadius: "0.375rem" }} src={post.coverImage ?? ""} alt="" width={1000} height={1000} />
-            : null}
+        <Suspense key={post.coverImage} fallback={<Loading />}>
+            {(post.coverImage!.length < 32) ? <Image className="object-cover w-full h-32 object-center" style={{ borderTopRightRadius: "0.375rem", borderTopLeftRadius: "0.375rem" }} src={post.coverImage ?? ""} alt="" width={1000} height={1000} />
+                : null}
+        </Suspense>
         <div className={"relative hover:cursor-pointer w-100 bg-white border-solid border-[1px] border-black/10" + (post.coverImage === null ? "rounded-lg" : "")} style={{
             borderBottomRightRadius: "0.75rem",
             borderBottomLeftRadius: "0.75rem",
@@ -125,11 +131,13 @@ export default function Post({
                 </div>
             </div>
             <div className="-mt-2 bottom-3">
-                {allComments?.map((comment, index) => {
-                    return <div key={index} className="">
-                        <Comment commentid={comment.id} userid={comment.createdById} preview={true} />
-                    </div>
-                })}
+                <Suspense key={allComments?.length} fallback={<Loading />}>
+                    {allComments?.map((comment, index) => {
+                        return <div key={index} className="">
+                            <Comment commentid={comment.id} userid={comment.createdById} preview={true} />
+                        </div>
+                    })}
+                </Suspense>
             </div>
         </div>
     </div >;

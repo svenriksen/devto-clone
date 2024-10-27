@@ -3,10 +3,13 @@
 import React, { Suspense, useEffect } from "react";
 import { api } from "@/trpc/react";
 import { navigate } from "../actions";
-import { notFound } from "next/navigation";
-import Post from "@/components/post";
+// import Post from "@/components/post";
+
+const Post = dynamic(() => import("@/components/post"), { ssr: false, loading: () => <Loading /> });
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import Loading from "@/components/loading";
+import dynamic from "next/dynamic";
 
 export default function Profile({ params }: { params: { userId: string } }) {
 
@@ -39,11 +42,11 @@ export default function Profile({ params }: { params: { userId: string } }) {
                 <div className="pt-12 md:pt-16 w-100 max-w-[1024px] md:mx-2 rounded-lg lg:mx-auto pb-4">
                     <div className="mt-2 bg-white rounded-lg">
                         <div className="relative mb-4 -mt-4">
-
-                            {(userId.data?.image) ? <div className="absolute left-4 -top-5 md:w-32 md:h-32 md:left-1/2 md:-top-10 md:-translate-x-[50%] rounded-full bg-transparent">
-                                <Image src={userId.data?.image ?? ""} alt="" width={1000} height={1000} className="w-28 h-auto rounded-full" />
-                            </div> : null}
-
+                            <Suspense fallback={<Loading></Loading>}>
+                                {(userId.data?.image) ? <div className="absolute left-4 -top-5 md:w-32 md:h-32 md:left-1/2 md:-top-10 md:-translate-x-[50%] rounded-full bg-transparent">
+                                    <Image src={userId.data?.image ?? ""} alt="" width={1000} height={1000} className="w-28 h-auto rounded-full" />
+                                </div> : null}
+                            </Suspense>
                             <div className="flex justify-end pt-6 pr-6 md:top-16">
                                 {userId.data?.id == session?.user.id ?
                                     <button onClick={(event) => { navigate("settings").catch(console.error); }} className="bg-[rgb(59,73,223)] py-2 px-4 font-medium text-white hover:bg-[rgb(47,58,178)] rounded-lg mr-2">
@@ -89,15 +92,17 @@ export default function Profile({ params }: { params: { userId: string } }) {
                     </div>
                     {posts ?
                         <div className="flex flex-col px-2 md:px-4">
-                            {posts.map((post, index) => {
-                                return <div key={index} className="mb-4">
-                                    <Post post={post} user={{
-                                        name: userId.data?.name as string,
-                                        image: userId.data?.image as string,
-                                        id: userId.data?.id as string
-                                    }} />
-                                </div>;
-                            })}
+                            <Suspense fallback={<Loading></Loading>}>
+                                {posts.map((post, index) => {
+                                    return <div key={index} className="mb-4">
+                                        <Post post={post} user={{
+                                            name: userId.data?.name as string,
+                                            image: userId.data?.image as string,
+                                            id: userId.data?.id as string
+                                        }} />
+                                    </div>;
+                                })}
+                            </Suspense>
                         </div>
                         :
                         <div className="p-4">No posts yet</div>}

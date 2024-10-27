@@ -1,12 +1,15 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import SideBar from "@/components/sidebar";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Post from "@/components/post";
+// import Post from "@/components/post";
+const Post = dynamic(() => import("@/components/post"), { ssr: false, loading: () => <Loading /> });
 import Billboard from "@/components/billboard";
 import { api } from "@/trpc/react";
+import dynamic from "next/dynamic";
+import Loading from "@/components/loading";
 
 export default function Home() {
   const allPosts = api.post.getAllPosts.useQuery().data;
@@ -39,17 +42,19 @@ export default function Home() {
           </div>
         </div >
         <div>
-          {allPosts?.map((post, index) => {
-            console.log(post.createdById);
-            if (index != 0) {
-              post.coverImage = null;
-            }
-            // const user = api.profile.getProfile.useQuery(post.createdById, { enabled: !!post.createdById });
-            // if (user.data === null) {
-            //   return null;
-            // }
-            return <Post key={index} post={post} user={null} />;
-          })}
+          <Suspense key={allPosts?.length.toString()} fallback={<Loading />}>
+            {allPosts?.map((post, index) => {
+              console.log(post.createdById);
+              if (index != 0) {
+                post.coverImage = null;
+              }
+              // const user = api.profile.getProfile.useQuery(post.createdById, { enabled: !!post.createdById });
+              // if (user.data === null) {
+              //   return null;
+              // }
+              return <Post key={index} post={post} user={null} />;
+            })}
+          </Suspense>
         </div>
       </div >
       <div className="hidden lg:block">

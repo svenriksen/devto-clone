@@ -21,6 +21,19 @@ const config = {
         ],
     },
     pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+    // async headers() {
+    //     return [
+    //         {
+    //             source: '/:path*{/}?',
+    //             headers: [
+    //                 {
+    //                     key: 'X-Accel-Buffering',
+    //                     value: 'no',
+    //                 },
+    //             ],
+    //         },
+    //     ];
+    // }
 };
 
 export default withMDX.default()(config);
