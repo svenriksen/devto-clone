@@ -66,10 +66,10 @@ export default function CommentBox({ post, subComment }
             <div className='bg-[var(--background))] w-full'>
                 <Tiptap onchange={() => null} content={content} setContent={setContent} mkdwn={mkdwn} setMkdwn={setMkdwn} className="!h-60 mb-3 !py-3 !px-3 text-sm md:text-base rounded-lg comment" />
                 <div className='flex items-center flex-row'>
-                    <button onClick={(event) => { submitForm(event) }} className='btn font-medium mr-2 !bg-[rgb(59,73,223)] !text-white hover:!bg-[rgb(47,58,178)] disabled:!bg-gray-400' disabled={content.length == 0}>
+                    <button onClick={(event) => { submitForm(event) }} className='btn !px-4 !py-2 !text-base leading-6 font-medium mr-2 !bg-[rgb(59,73,223)] !text-white hover:!bg-[rgb(47,58,178)] disabled:!bg-[rgb(59,73,223)]/60' disabled={content.length == 0}>
                         Submit
                     </button>
-                    <button className='btn font-medium'>
+                    <button className='btn !text-base !px-4 !py-2 leading-6 font-medium !bg-[#d6d6d7] !text-[#3d3d3d] disabled:opacity-60 disabled:!bg-[#d6d6d7] hover:!bg-[#bdbdbd]' disabled={content.length == 0}>
                         Preview
                     </button>
                 </div>

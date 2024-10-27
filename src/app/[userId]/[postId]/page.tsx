@@ -10,7 +10,7 @@ import { Tooltip } from "@nextui-org/tooltip";
 import { useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 // import Image from "next/image";
-const Image = dynamic(() => import("next/image"), { ssr: false });
+const Image = dynamic(() => import("next/image"), { ssr: false, loading: () => <Loading /> });
 import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
 
@@ -28,6 +28,8 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
 
     const [react, setReact] = useState(false);
     const [reactionsCount, setReactionsCount] = useState(0);
+    const [complete, setComplete] = useState(false);
+    const [complete1, setComplete1] = useState(false);
 
     useEffect(() => {
         if (isCurrentUserReaction === undefined) { return; }
@@ -114,16 +116,16 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                 </aside >
                 <div className="bg-white rounded-lg pb-8">
                     <Suspense key={post.data?.coverImage} fallback={<Loading />}>
-                        {(post.data?.coverImage !== null && post.data?.coverImage.replace("data:application/octet-stream;base64,", "").trim() !== "") ? <Image alt="" src={post.data?.coverImage ?? ""} style={{ borderTopLeftRadius: "0.375rem", borderTopRightRadius: "0.375rem" }} width={2000} height={2000} />
+                        {(post.data?.coverImage && post.data?.coverImage.replace("data:application/octet-stream;base64,", "").trim() !== "") ? <Image alt="" src={post.data?.coverImage ?? ""} style={{ borderTopLeftRadius: "0.375rem", borderTopRightRadius: "0.375rem" }} width={2000} height={2000} className={(complete ? "" : "animate-pulse bg-gray-200 blur-md") + " w-full h-auto"} onLoadingComplete={() => setComplete(true)} />
                             : null}
                     </Suspense>
-                    <Suspense key={user?.id} fallback={<Loading />}>
+                    <Suspense key={user?.image?.length} fallback={<Loading />}>
 
                         <div className="pt-8 px-12 relative md:px-16">
 
                             <Link href={`${user?.id}`} className="py-3 relative">
                                 <div className="absolute w-8 h-8 -left-10 top-0 rounded-full">
-                                    <Image alt="" src={user?.image ?? ""} width={1000} height={1000} className="w-full max-w-screen-xl h-auto rounded-full" />
+                                    <Image alt="" src={user?.image ?? ""} width={1000} height={1000} onLoadingComplete={() => setComplete1(true)} className={(complete1 ? " " : "animate-pulse bg-gray-200 blur-md ") + "w-full max-w-screen-xl h-auto rounded-full"} />
                                 </div>
                                 <div className="flex items-start justify-between">
                                     <div>

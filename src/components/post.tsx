@@ -80,7 +80,7 @@ export default function Post({
 
     return <div className="mb-4">
         <Suspense key={post.coverImage} fallback={<Loading />}>
-            {(post.coverImage!.length < 32) ? <Image className="object-cover w-full h-32 object-center" style={{ borderTopRightRadius: "0.375rem", borderTopLeftRadius: "0.375rem" }} src={post.coverImage ?? ""} alt="" width={1000} height={1000} />
+            {(post.coverImage && post.coverImage.length < 32) ? <Image className="object-cover w-full h-32 object-center" style={{ borderTopRightRadius: "0.375rem", borderTopLeftRadius: "0.375rem" }} src={post.coverImage ?? ""} alt="" width={1000} height={1000} />
                 : null}
         </Suspense>
         <div className={"relative hover:cursor-pointer w-100 bg-white border-solid border-[1px] border-black/10" + (post.coverImage === null ? "rounded-lg" : "")} style={{

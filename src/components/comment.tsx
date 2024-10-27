@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime'
 
 import { usePathname, useRouter } from 'next/navigation';
-import { navigate } from '@/app/actions';
+
 import CommentBox from './commentbox';
 
 export default function Comment({ commentid, userid, preview }: { commentid: string, userid: string, preview: boolean }) {
