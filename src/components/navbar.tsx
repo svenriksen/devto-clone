@@ -24,6 +24,7 @@ function Navbar() {
 
     function onChangeSearch(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
+        setFocus(true);
         const data = new FormData(e.currentTarget);
         // searchResult = api.post.searchFirstFivePosts.useSuspenseQuery({ query: data.get("query") as string });
 
