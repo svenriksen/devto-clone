@@ -12,8 +12,9 @@ import dynamic from "next/dynamic";
 import Loading from "@/components/loading";
 
 export default function Home() {
-  const allPosts = api.post.getAllPosts.useQuery().data;
+  const allPosts = api.post.getAllPosts.useSuspenseQuery();
   const pathName = usePathname();
+
 
   function checkPath() {
     if (pathName === "/") {
@@ -37,14 +38,11 @@ export default function Home() {
             <Link href={"/latest"} className={(checkPath() == "Latest" ? "font-bold" : "") + " btn leading-loose"}>Latest</Link>
             <Link href={"/top/week"} className={(checkPath() == "Top" ? "font-bold" : "") + " btn leading-loose"}>Top</Link>
           </div>
-          <div className="">
-
-          </div>
         </div >
         <div>
-          <Suspense key={allPosts?.length.toString()} fallback={<Loading />}>
-            {allPosts?.map((post, index) => {
-              console.log(post.createdById);
+          <Suspense fallback={<Loading />}>
+            {allPosts[1].data?.map((post, index) => {
+
               if (index != 0) {
                 post.coverImage = null;
               }

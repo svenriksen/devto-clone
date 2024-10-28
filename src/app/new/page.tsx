@@ -11,6 +11,7 @@ import Tiptap from "@/components/tiptap";
 import { Tooltip } from "@nextui-org/tooltip"
 import { api } from "@/trpc/react";
 import { redirect } from "next/dist/server/api-utils";
+import { useRouter } from "next/navigation";
 
 // import Markdown from "@/components/mdwn";
 
@@ -27,6 +28,8 @@ export default function CreatePost() {
     const [mkdwn, setMkdwn] = React.useState<string>("");
 
     const mutation = api.post.create.useMutation();
+    const router = useRouter();
+
     function asideGuideChange(index: number) {
         let active = isActive;
         active = active.map((_, i) => i == index);
@@ -135,14 +138,18 @@ export default function CreatePost() {
                         content: mkdwn,
                         coverImage: base64
                     });
-
+                    router.refresh();
+                    // router.push(`/${mutation.data?.createdById}/${mutation.data?.id}`);
                 }
                 resolve("done");
             });
         }
-        await upload();
-        console.log(`/${mutation.data?.createdById}/${mutation.data?.id}`);
-        await navigate(`${session?.user.id}`).catch(console.error);
+        await Promise.resolve(upload()).then(() => {
+            console.log("done");
+            console.log(`/${mutation.data?.createdById}/${mutation.data?.id}`);
+            router.push(`/${mutation.data?.createdById}/${mutation.data?.id}`);
+        });
+
         if (mutation.error) {
             console.error(mutation.error);
             return;
@@ -172,7 +179,7 @@ export default function CreatePost() {
                     <div className="py-5 px-5 md:py-8 md:px-12 lg:px-16">
                         <div className="flex flex-row items-center mb-5">
                             <div className="flex items-center">
-                                {(image ? <Image src={""} alt="" id="image-preview" className="w-[40%] h-auto" /> : null)}
+                                {(image ? <Image src={""} alt="" id="image-preview" className="w-auto h-[200px] rounded-lg mr-4" /> : null)}
                                 <Tooltip className="w-fit bg-black/90 text-white text-sm py-1 px-2 rounded-lg" placement="bottom" size="sm" content="Use a ratio of 1000:420 for best results.">
                                     <label htmlFor="image" className="w-auto z-10 cursor-pointer font-medium border-[#a3a3a3] border-solid border-2 rounded-lg py-2 px-4 text-sm">
                                         {(image ? <>Change</> : <>Add a cover image</>)}

@@ -117,4 +117,9 @@ export const postRouter = createTRPCRouter({
     return await ctx.db.post.findMany({ where: { title: { contains: input.query } } });
   }),
 
+  searchFirstFivePosts: publicProcedure.input(z.object({ query: z.string() })).query(async ({ ctx, input }) => {
+    if (input.query === "") { return []; }
+    return await ctx.db.post.findMany({ where: { title: { contains: input.query } }, take: 5 });
+  }),
+
 });

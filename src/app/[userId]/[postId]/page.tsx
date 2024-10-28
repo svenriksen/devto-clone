@@ -12,13 +12,18 @@ import dynamic from "next/dynamic";
 // import Image from "next/image";
 const Image = dynamic(() => import("next/image"), { ssr: false, loading: () => <Loading /> });
 import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
+import { notFound } from "next/navigation";
+import { Suspense, use, useEffect, useState } from "react";
+import moment from "moment";
 
 function Post({ params }: { params: { userId: string, postId: string } }) {
     const { data: session } = useSession();
-    const post = api.post.getPostById.useQuery({ id: params.postId });
-    const user = api.profile.getProfile.useQuery(post.data?.createdById ?? "", { enabled: !!post.data?.createdById }).data;
-    const comments = api.post.getPostAllComments.useQuery({ id: post.data?.id ?? "", quantity: -1 }).data;
+    const post = api.post.getPostById.useSuspenseQuery({ id: params.postId })[1];
+    if (post.data === null) {
+        notFound();
+    }
+    const user = api.profile.getProfile.useSuspenseQuery(post.data?.createdById ?? "mm")[1].data;
+    const comments = api.post.getPostAllComments.useSuspenseQuery({ id: post.data?.id ?? "", quantity: -1 })[1].data;
     const temp = api.post.deletePosts.useMutation();
     const reactions = api.post.getPostReactionCount.useQuery({ id: post.data?.id ?? "" });
     const isCurrentUserReaction = api.post.getPostReactions.useQuery({ id: post.data?.id ?? "" });
@@ -46,6 +51,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
             }).catch(console.error);
         }
     }, [isCurrentUserReaction, reactions]);
+
 
     const [formFocus, setFormFocus] = useState(false);
 
@@ -123,14 +129,14 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
 
                         <div className="pt-8 px-12 relative md:px-16">
 
-                            <Link href={`${user?.id}`} className="py-3 relative">
+                            <Link href={`/${user?.id}`} className="py-3 relative">
                                 <div className="absolute w-8 h-8 -left-10 top-0 rounded-full">
                                     <Image alt="" src={user?.image ?? ""} width={1000} height={1000} onLoadingComplete={() => setComplete1(true)} className={(complete1 ? " " : "animate-pulse bg-gray-200 blur-md ") + "w-full max-w-screen-xl h-auto rounded-full"} />
                                 </div>
                                 <div className="flex items-start justify-between">
                                     <div>
                                         <div className="font-medium text-base">{user?.name}</div>
-                                        <div className="text-xs text-[rgb(82,82,82)] mb-5">{post.data?.createdAt.toUTCString()}</div>
+                                        <div className="text-xs text-[rgb(82,82,82)] mb-5">Posted on {moment(post.data?.createdAt).format("MMM DD")}</div>
                                     </div>
                                     {(session?.user.id === post.data?.createdById ? <button onClick={(event) => {
                                         event.preventDefault();

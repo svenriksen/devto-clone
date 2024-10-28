@@ -9,7 +9,7 @@ const Comment = dynamic(() => import("@/components/comment"), { ssr: false, load
 
 import Loading from "./loading";
 import dynamic from "next/dynamic";
-
+import moment from 'moment';
 
 export default function Post({
     post,
@@ -98,18 +98,19 @@ export default function Post({
                         <div className="absolute w-8 h-8 -left-10 top-3 rounded-full">
                         </div>
                         <div className="font-medium text-sm">{user?.name}</div>
-                        <div className="text-xs text-[rgb(82,82,82)]">{post.createdAt.toUTCString()}</div>
+                        <div className="text-xs text-[rgb(82,82,82)]">{moment(post.createdAt).format("MMM DD")} ({moment(post.createdAt).fromNow()})</div>
                     </div>
                     <div className="pb-3">
                         <Link href={`${user?.id}/${post.id}`} className="text-2xl font-bold hover:text-[rgba(47,58,178)]">{post.title}</Link>
                     </div>
-                    <div className="pb-4 -ml-2">
+                    {post.tags.length > 0 ? <div className="pb-4 -ml-2">
                         {post.tags.map((tag, index) => {
                             return <Link href={"/"} key={index} className="text-sm btn !px-2 !py-1 border-[1px] border-transparent !bg-white hover:!bg-[rgba(59,73,223)]/25 hover:border-[rgba(59,73,223)] hover:border-[1px] hover:border-solid transition duration-300">
                                 <span className="text-[rgba(59,73,223)]">#</span>{tag}
                             </Link>
                         })}
-                    </div>
+                    </div> : null}
+
                     <div className="pb-4 -ml-2 flex items-center w-full justify-between" >
                         <div className="flex items-center">
                             <Link href={"/"} className="flex items-center hover:bg-slate-100/50 px-2 py-1 w-fit rounded">

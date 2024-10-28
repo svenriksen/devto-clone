@@ -12,7 +12,7 @@ import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
 import rehypeSanitize from 'rehype-sanitize'
 import rehypeStringify from 'rehype-stringify'
-import { VFile } from 'node_modules/@mdx-js/loader/lib';
+
 
 const Tiptap = ({
     onchange,
@@ -33,7 +33,9 @@ const Tiptap = ({
     const editor = useEditor({
         enableInputRules: false,
         immediatelyRender: false,
-
+        parseOptions: {
+            preserveWhitespace: 'full',
+        },
         extensions: [
             StarterKit.configure({
                 blockquote: { HTMLAttributes: { class: 'font-sans' } },
@@ -91,31 +93,147 @@ const Tiptap = ({
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, type: string) => {
 
+        const { view, state } = editor;
+        const { from, to } = view.state.selection;
+        const tr = view.state.tr;
+        const text = state.doc.textBetween(from, to, '\n');
+        // console.log(text);
         event.preventDefault();
         if (type === "bold") {
-            editor.commands.insertContent('**bold**');
+            // editor.chain().focus().toggleBold().run()
+            if (text.length == 0) { editor.commands.insertContent('**bold**'); }
+            else {
+                editor.commands.insertContentAt({ from: from, to: to }, '**' + text + '**', {
+                    updateSelection: true,
+                    parseOptions: {
+                        preserveWhitespace: 'full',
+                    },
+                });
+            }
+
         } else if (type === "italic") {
-            editor.commands.insertContent('_italic_');
+            if (text.length == 0) { editor.commands.insertContent('_italic_'); }
+            else {
+                editor.commands.insertContentAt({ from: from, to: to }, '_' + text + '_', {
+                    updateSelection: true,
+                    parseOptions: {
+                        preserveWhitespace: 'full',
+                    },
+                });
+            }
         } else if (type === "link") {
-            editor.commands.insertContent('[](url)');
+            if (text.length == 0) { editor.commands.insertContent('[](url)'); }
+            else {
+                editor.commands.insertContentAt({ from: from, to: to }, '[' + text + '](url)', {
+                    updateSelection: true,
+                    parseOptions: {
+                        preserveWhitespace: 'full',
+                    },
+                });
+            }
         } else if (type === "ordered-list") {
-            editor.commands.insertContent('1. ');
+            if (text.length == 0) { editor.commands.insertContent('1. '); }
+            // increment the number
+            else {
+                const lines = text.split('\n');
+                let newlines = '';
+                for (let i = 0; i < lines.length; i++) {
+                    newlines += (i + 1) + '. ' + lines[i] + '\n';
+                }
+                editor.commands.insertContentAt({ from: from, to: to }, newlines, {
+                    updateSelection: true,
+                    parseOptions: {
+                        preserveWhitespace: 'full',
+                    },
+                });
+            }
         } else if (type === "unordered-list") {
-            editor.commands.insertContent('- ');
+            if (text.length == 0) { editor.commands.insertContent('- '); }
+            else {
+                const lines = text.split('\n');
+                let newlines = '';
+                for (const line of lines) {
+                    newlines += '- ' + line + '\n';
+                }
+                editor.commands.insertContentAt({ from: from, to: to }, newlines, {
+                    updateSelection: true,
+                    parseOptions: {
+                        preserveWhitespace: 'full',
+                    },
+                });
+            }
         } else if (type === "heading") {
-            editor.commands.insertContent('# ');
+            if (text.length == 0) { editor.commands.insertContent('# '); }
+            else {
+                editor.commands.insertContentAt({ from: from, to: to }, '# ' + text);
+            }
         } else if (type === "quote") {
-            editor.commands.insertContent('> ');
+            if (text.length == 0) { editor.commands.insertContent('> '); }
+            else {
+                const lines = text.split('\n');
+                let newlines = '';
+                for (const line of lines) {
+                    newlines += '> ' + line + '\n';
+                }
+                editor.commands.insertContentAt({ from: from, to: to }, newlines, {
+                    updateSelection: true,
+                    parseOptions: {
+                        preserveWhitespace: 'full',
+                    },
+                });
+            }
         } else if (type === "strike") {
-            editor.commands.insertContent('~~strike~~');
+            if (text.length == 0) { editor.commands.insertContent('~~strike~~'); }
+            else {
+                editor.commands.insertContentAt({ from: from, to: to }, '~~' + text + '~~');
+            }
+            // editor.commands.insertContent('~~strike~~');
         } else if (type === "code") {
-            editor.commands.insertContent('`code`');
+
+            if (text.length == 0) { editor.commands.insertContent('`code`'); }
+            else {
+                editor.commands.insertContentAt({ from: from, to: to }, '`' + text + '`', {
+                    updateSelection: true,
+                    parseOptions: {
+                        preserveWhitespace: 'full',
+                    },
+                });
+            }
+            // editor.commands.insertContent('`code`');
+
         } else if (type === "codeblock") {
-            editor.commands.insertContent('```language\n\n```');
+            if (text.length == 0) { editor.commands.insertContent('```language\n\n```'); }
+            else {
+                editor.commands.insertContentAt({ from: from, to: to }, '```language\n' + text + '\n```', {
+                    updateSelection: true,
+                    parseOptions: {
+                        preserveWhitespace: 'full',
+                    },
+                });
+            }
+            // editor.commands.insertContent('```language\n\n```');
         } else if (type === "embed") {
-            editor.commands.insertContent('![embed](url)');
+            if (text.length == 0) { editor.commands.insertContent('![embed](url)'); }
+            else {
+                editor.commands.insertContentAt({ from: from, to: to }, '![embed](url)', {
+                    updateSelection: true,
+                    parseOptions: {
+                        preserveWhitespace: 'full',
+                    },
+                });
+            }
+            // editor.commands.insertContent('![embed](url)');
         } else if (type === "image") {
-            editor.commands.insertContent('![image](url)');
+            if (text.length == 0) { editor.commands.insertContent('![image](url)'); }
+            else {
+                editor.commands.insertContentAt({ from: from, to: to }, '![image](url)', {
+                    updateSelection: true,
+                    parseOptions: {
+                        preserveWhitespace: 'full',
+                    },
+                });
+            }
+            // editor.commands.insertContent('![image](url)');
         }
     }
     if (className?.includes("comment")) {

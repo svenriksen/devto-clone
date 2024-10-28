@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import Image from 'next/image';
 import { api } from '@/trpc/react';
 import { useSession } from 'next-auth/react';
@@ -8,6 +8,10 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 import { usePathname, useRouter } from 'next/navigation';
 
 import CommentBox from './commentbox';
+import Link from 'next/link';
+import Loading from './loading';
+
+import moment from 'moment';
 
 export default function Comment({ commentid, userid, preview }: { commentid: string, userid: string, preview: boolean }) {
 
@@ -18,8 +22,8 @@ export default function Comment({ commentid, userid, preview }: { commentid: str
 
     dayjs.extend(relativeTime);
 
-    const comment = api.post.getPostCommentById.useQuery({ id: commentid }).data;
-    const user = api.profile.getProfile.useQuery(userid).data;
+    const comment = api.post.getPostCommentById.useSuspenseQuery({ id: commentid })[1].data;
+    const user = api.profile.getProfile.useSuspenseQuery(userid)[1].data;
     const tempDeleteComment = api.post.deleteComment.useMutation({
         onSuccess: () => {
             window.location.reload();
@@ -42,8 +46,8 @@ export default function Comment({ commentid, userid, preview }: { commentid: str
 
                 <div className='rounded-lg bg-[--background] w-full grow p-4 pb-1'>
                     <div className='max-w-full w-full flex flex-row itemts-center'>
-                        <h1 className='text-black/80 mb-1 font-medium mr-2'>{user?.name}</h1>
-                        <h2 className='text-sm text-[#717171]'>{dayjs(comment?.createdAt.toLocaleTimeString()).fromNow()}</h2>
+                        <Link href={"/" + user?.id} className='text-black/80 mb-1 font-medium mr-2'>{user?.name}</Link>
+                        <h2 className='text-sm text-[#717171]'>{moment(comment?.createdAt).fromNow()}</h2>
                     </div>
                     <div className='object-contain w-auto'>
                         <div className='w-full text-black/80 '>
@@ -67,19 +71,21 @@ export default function Comment({ commentid, userid, preview }: { commentid: str
                     <div className='w-full bg-white rounded-lg border-[1px] border-black/10 border-solid'>
                         <div className='flex flex-row justify-between'>
                             <div className='flex flex-row items-center'>
-                                <h1 className='my-2 pt-2 px-3 text-base font-medium'>{user?.name}</h1>
+                                <Link href={"/" + user?.id} className='my-2 pt-2 px-3 text-base font-medium'>{user?.name}</Link>
                                 <span className="text-black/30 pt-2 px-2 text-xl md:pl-0 align-middle self-center" role="presentation">•</span>
-                                <h2 className='text-sm pt-2 text-[#717171]'>{comment?.createdAt.toLocaleDateString()}</h2>
+                                <h2 className='text-sm pt-2 text-[#717171]'>{moment(comment?.createdAt).format("DD/MM/YYYY")}</h2>
                             </div>
                             <div>
                                 {/* delete button */}
-                                {(session?.user.id === comment?.createdById ? <button onClick={(event) => {
-                                    event.preventDefault();
-                                    tempDeleteComment.mutateAsync({ id: commentid }).catch(console.error);
-                                    // navigate(path.substring(1)).catch(console.error);
-                                    // window.location.reload();
-                                    router.refresh();
-                                }} className="mx-3 mt-2 px-2 py-1 border-[1px] text-sm md:text-base border-solid border-red-500 rounded-lg text-red-500 hover:bg-red-300">Delete</button> : null)}
+                                <Suspense fallback={<Loading />}>
+                                    {(session?.user.id === comment?.createdById ? <button onClick={(event) => {
+                                        event.preventDefault();
+                                        tempDeleteComment.mutateAsync({ id: commentid }).catch(console.error);
+                                        // navigate(path.substring(1)).catch(console.error);
+                                        // window.location.reload();
+                                        router.refresh();
+                                    }} className="mx-3 mt-2 px-2 py-1 border-[1px] text-sm md:text-base border-solid border-red-500 rounded-lg text-red-500 hover:bg-red-300">Delete</button> : null)}
+                                </Suspense>
                             </div>
                         </div>
                         <div className='px-3 mb-4'>
@@ -101,15 +107,19 @@ export default function Comment({ commentid, userid, preview }: { commentid: str
                         </button>
 
                     </div>
-                    {session?.user ? (clicked ?
-                        < CommentBox post={{ id: comment?.id ?? "" }} subComment={true} /> :
-                        null
-                    ) : null}
-                    <div className='pl-5 w-full'>
-                        {replyComment?.map((comment, index) => {
-                            return <Comment key={index} commentid={comment.id} userid={comment.createdById} preview={false} />
-                        })}
-                    </div>
+                    <Suspense fallback={<Loading />}>
+                        {session?.user ? (clicked ?
+                            < CommentBox post={{ id: comment?.id ?? "" }} subComment={true} /> :
+                            null
+                        ) : null}
+                    </Suspense>
+                    <Suspense fallback={<Loading />}>
+                        <div className='pl-5 w-full'>
+                            {replyComment?.map((comment, index) => {
+                                return <Comment key={index} commentid={comment.id} userid={comment.createdById} preview={false} />
+                            })}
+                        </div>
+                    </Suspense>
                 </div>
 
             </div>
