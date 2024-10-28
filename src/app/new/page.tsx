@@ -12,12 +12,14 @@ import { Tooltip } from "@nextui-org/tooltip"
 import { api } from "@/trpc/react";
 import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
+import { set } from "zod";
 
 // import Markdown from "@/components/mdwn";
 
 export default function CreatePost() {
     const { data: session } = useSession();
     const [isEditing, setIsEditing] = React.useState(true);
+    const [publish, setPublish] = React.useState(false);
 
     const [isActive, setIsActive] = React.useState([false, false, false, false]);
     const [currentSize, setCurrentSize] = React.useState(0);
@@ -28,6 +30,10 @@ export default function CreatePost() {
     const [mkdwn, setMkdwn] = React.useState<string>("");
 
     const mutation = api.post.create.useMutation({
+        onMutate(variables) {
+            console.log("onMutate", variables);
+            setPublish(true);
+        },
         onSuccess: (data) => {
             navigate(`${data.createdById}/${data.id}`).catch(console.error);
         }
@@ -266,8 +272,8 @@ export default function CreatePost() {
                 </div>
 
                 <div className="h-[72px] px-2 md:p-0 flex items-center row-start-3 col-span-2 md:col-start-1 lg:col-start-2" onMouseEnter={() => asideGuideChange(3)}>
-                    <button type="submit" formAction={postPublish} className="bg-[rgb(59,73,223)] py-2 px-4 font-medium text-white hover:bg-[rgb(47,58,178)] rounded-lg mr-2">Publish</button>
-                    <button className="py-2 px-4 font-medium btn rounded-lg mr-2 text-ellipsis leading-tight">Save draft</button>
+                    <button type="submit" formAction={postPublish} disabled={publish} className={(publish ? "bg-[rgb(59,73,223)]/30 " : " ") + "bg-[rgb(59,73,223)] py-2 px-4 font-medium text-white hover:bg-[rgb(47,58,178)] rounded-lg mr-2"}>{publish ? <span className="font-medium text-white">Publishing</span> : <span className="font-medium text-white">Publish</span>}</button>
+                    <button className="py-2 px-4 font-medium btn rounded-lg mr-2 text-ellipsis leading-tight" disabled={publish}>Save draft</button>
                     <button className="py-2 px-4 font-medium btn rounded-lg">
                         <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" className="crayons-icon c-btn__icon"><path d="M12 1l9.5 5.5v11L12 23l-9.5-5.5v-11L12 1zm0 2.311L4.5 7.653v8.694l7.5 4.342 7.5-4.342V7.653L12 3.311zM12 16a4 4 0 110-8 4 4 0 010 8zm0-2a2 2 0 100-4 2 2 0 000 4z"></path></svg>
                     </button>
