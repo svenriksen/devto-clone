@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE "Post" ALTER COLUMN "coverImage" SET DATA TYPE TEXT;

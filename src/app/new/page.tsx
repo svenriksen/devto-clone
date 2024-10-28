@@ -27,7 +27,11 @@ export default function CreatePost() {
     const [content, setContent] = React.useState<string>("");
     const [mkdwn, setMkdwn] = React.useState<string>("");
 
-    const mutation = api.post.create.useMutation();
+    const mutation = api.post.create.useMutation({
+        onSuccess: (data) => {
+            navigate(`${data.createdById}/${data.id}`).catch(console.error);
+        }
+    });
     const router = useRouter();
 
     function asideGuideChange(index: number) {
@@ -124,7 +128,7 @@ export default function CreatePost() {
         }
         const title = formData.get("title") as string;
 
-        const upload = () => {
+        const upload = async () => {
             const reader = new FileReader();
             return new Promise((resolve, reject) => {
                 let base64: ArrayBuffer | string = "";
@@ -137,8 +141,10 @@ export default function CreatePost() {
                         tags: tags,
                         content: mkdwn,
                         coverImage: base64
+
                     });
-                    router.refresh();
+                    // router.refresh();
+                    // console.log(`checkrouter/${mutation.data?.createdById}/${mutation.data?.id}`);
                     // router.push(`/${mutation.data?.createdById}/${mutation.data?.id}`);
                 }
                 resolve("done");
@@ -146,8 +152,8 @@ export default function CreatePost() {
         }
         await Promise.resolve(upload()).then(() => {
             console.log("done");
-            console.log(`/${mutation.data?.createdById}/${mutation.data?.id}`);
-            router.push(`/${mutation.data?.createdById}/${mutation.data?.id}`);
+            // console.log(`/${mutation.data?.createdById}/${mutation.data?.id}`);
+            // router.push(`/${mutation.data?.createdById}/${mutation.data?.id}`);
         });
 
         if (mutation.error) {

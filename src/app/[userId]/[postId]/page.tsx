@@ -24,9 +24,9 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
     }
     const user = api.profile.getProfile.useSuspenseQuery(post.data?.createdById ?? "mm")[1].data;
     const comments = api.post.getPostAllComments.useSuspenseQuery({ id: post.data?.id ?? "", quantity: -1 })[1].data;
-    const temp = api.post.deletePosts.useMutation();
+    const temp = api.post.deletePosts.useMutation({ onSuccess: () => navigate("/") });
     const reactions = api.post.getPostReactionCount.useQuery({ id: post.data?.id ?? "" });
-    const isCurrentUserReaction = api.post.getPostReactions.useQuery({ id: post.data?.id ?? "" });
+    const isCurrentUserReaction = api.post.getPostReactions.useSuspenseQuery({ id: post.data?.id ?? "" })[1];
 
     const tempAddReaction = api.post.reactToPost.useMutation();
     const tempRemoveReaction = api.post.removePostReaction.useMutation();
@@ -38,8 +38,14 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
 
     useEffect(() => {
         if (isCurrentUserReaction === undefined) { return; }
-        if (isCurrentUserReaction.data) {
-            setReact(true);
+        if (isCurrentUserReaction.data.length > 0) {
+
+            isCurrentUserReaction.data.forEach((reaction) => {
+                if (reaction.createdById === session?.user.id) {
+                    setReact(true);
+                }
+            });
+
             reactions.refetch().then(() => {
                 setReactionsCount(reactions.data! ?? 0);
             }).catch(console.error);
@@ -57,26 +63,40 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
 
     function reactToPost(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         event.preventDefault();
-        if (isCurrentUserReaction.data!.length === 0) {
+        console.log("like")
+
+        let tempReact = false;
+        isCurrentUserReaction.data.forEach((reaction) => {
+            console.log(reaction.createdById, session?.user.id);
+            if (reaction.createdById === session?.user.id) {
+                tempReact = true;
+
+            }
+        });
+
+        console.log(tempReact, isCurrentUserReaction.data);
+        if (!tempReact) {
             tempAddReaction.mutate({ id: post.data?.id ?? "", reaction: "like" });
             isCurrentUserReaction.refetch().then(() => {
-                setReact(isCurrentUserReaction.data!.length > 0);
+                setReact(true);
             }).catch(console.error);
             reactions.refetch().then(() => {
                 setReactionsCount(reactions.data! ?? 0);
             }).catch(console.error);
+
         }
         else {
             // api.post.reactToPost.useMutation({ id: post.data?.id ?? "", reaction: "unlike" });
-            if (isCurrentUserReaction.data!.length > 0) {
-                tempRemoveReaction.mutate({ id: isCurrentUserReaction.data![0]!.id ?? 0 });
-                isCurrentUserReaction.refetch().then(() => {
-                    setReact(isCurrentUserReaction.data!.length > 0);
-                }).catch(console.error);
-                reactions.refetch().then(() => {
-                    setReactionsCount(reactions.data! ?? 0);
-                }).catch(console.error);
-            }
+
+            tempRemoveReaction.mutate({ id: post.data?.id ?? "" });
+            isCurrentUserReaction.refetch().then(() => {
+                setReact(false);
+
+            }).catch(console.error);
+            reactions.refetch().then(() => {
+                setReactionsCount(reactions.data! ?? 0);
+            }).catch(console.error);
+
         }
     }
 
@@ -88,10 +108,10 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                     <div className="grid gap-6 items-center">
                         <Tooltip className="!w-fit bg-black/90 text-white text-sm py-1 px-2 rounded-lg" placement="bottom" size="sm" content="Add reaction">
 
-                            <button onClick={(event) => reactToPost(event)} className="hover:!fill-[#eb4d05]">
+                            <button onClick={(event) => reactToPost(event)} className={"hover:!fill-[#eb4d05]"}>
                                 <svg className={(react ? "fill-[#525252]" : "") + " hover:!fill-[#eb4d05] rounded-lg"} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-hidden="true" >
-                                    <g clipPath="url(#clip0_988_3276)">
-                                        <path d="M19 14V17H22V19H18.999L19 22H17L16.999 19H14V17H17V14H19ZM20.243 4.75698C22.505 7.02498 22.583 10.637 20.479 12.992L19.059 11.574C20.39 10.05 20.32 7.65998 18.827 6.16998C17.324 4.67098 14.907 4.60698 13.337 6.01698L12.002 7.21498L10.666 6.01798C9.09103 4.60598 6.67503 4.66798 5.17203 6.17198C3.68203 7.66198 3.60703 10.047 4.98003 11.623L13.412 20.069L12 21.485L3.52003 12.993C1.41603 10.637 1.49503 7.01898 3.75603 4.75698C6.02103 2.49298 9.64403 2.41698 12 4.52898C14.349 2.41998 17.979 2.48998 20.242 4.75698H20.243Z" className="hover:!fill-[#eb4d05]"></path>
+                                    <g clipPath="url(#clip0_988_3276)" className={react ? "bg-[#eb4d05]" : "" + ""}>
+                                        <path d="M19 14V17H22V19H18.999L19 22H17L16.999 19H14V17H17V14H19ZM20.243 4.75698C22.505 7.02498 22.583 10.637 20.479 12.992L19.059 11.574C20.39 10.05 20.32 7.65998 18.827 6.16998C17.324 4.67098 14.907 4.60698 13.337 6.01698L12.002 7.21498L10.666 6.01798C9.09103 4.60598 6.67503 4.66798 5.17203 6.17198C3.68203 7.66198 3.60703 10.047 4.98003 11.623L13.412 20.069L12 21.485L3.52003 12.993C1.41603 10.637 1.49503 7.01898 3.75603 4.75698C6.02103 2.49298 9.64403 2.41698 12 4.52898C14.349 2.41998 17.979 2.48998 20.242 4.75698H20.243Z" className={react ? "bg-[#eb4d05] " : "" + "hover:!fill-[#eb4d05]"}></path>
                                     </g>
                                     <defs>
                                         <clipPath id="clip0_988_3276">
@@ -141,7 +161,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                                     {(session?.user.id === post.data?.createdById ? <button onClick={(event) => {
                                         event.preventDefault();
                                         temp.mutate({ id: post.data?.id ?? "" });
-                                        navigate("").catch(console.error);
+
                                     }} className="absolute -right-7 px-2 py-2 border-[1px] text-sm md:text-base border-solid border-red-500 rounded-lg text-red-500 hover:bg-red-300">Delete</button> : null)}
 
                                 </div>
@@ -200,7 +220,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                             <div className="relative px-4 -mt-4">
                                 <div className="flex items-end">
                                     <Image alt="" src={user?.image ?? ""} width={1000} height={1000} className="-top-10 mb-2 mr-3 w-10 h-auto rounded-full" />
-                                    <h1 className="mb-2 font-bold text-lg">{user?.name}</h1>
+                                    <Link href={"/" + post.data.createdById} className="mb-2 font-bold text-lg">{user?.name}</Link>
                                 </div>
                             </div>
                             <div className="p-4">

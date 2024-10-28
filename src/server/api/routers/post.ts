@@ -84,8 +84,13 @@ export const postRouter = createTRPCRouter({
     return await ctx.db.reaction.findMany({ where: { postId: input.id, createdById: ctx.session.user.id } });
   }),
 
-  removePostReaction: protectedProcedure.input(z.object({ id: z.number() })).mutation(async ({ ctx, input }) => {
-    return await ctx.db.reaction.delete({ where: { id: input.id } });
+  removePostReaction: protectedProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+    return await ctx.db.reaction.delete({
+      where: {
+        like: { postId: input.id, createdById: ctx.session.user.id },
+
+      }
+    });
   }),
 
   getPostAllComments: publicProcedure.input(z.object({ id: z.string(), quantity: z.number() })).query(async ({ ctx, input }) => {
