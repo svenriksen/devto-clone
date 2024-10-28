@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 "use client";
 import { navigate } from "@/app/actions";
 // import Comment from "@/components/comment";
@@ -26,8 +29,10 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
     const comments = api.post.getPostAllComments.useSuspenseQuery({ id: post.data?.id ?? "", quantity: -1 })[1].data;
     const temp = api.post.deletePosts.useMutation({ onSuccess: () => navigate("/") });
     const reactions = api.post.getPostReactionCount.useQuery({ id: post.data?.id ?? "" });
-    const isCurrentUserReaction = api.post.getPostReactions.useSuspenseQuery({ id: post.data?.id ?? "" })[1];
-
+    let isCurrentUserReaction: any;
+    if (session) {
+        isCurrentUserReaction = api.post.getPostReactions.useSuspenseQuery({ id: post.data?.id ?? "" })[1];
+    }
     const tempAddReaction = api.post.reactToPost.useMutation();
     const tempRemoveReaction = api.post.removePostReaction.useMutation();
 
@@ -37,10 +42,11 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
     const [complete1, setComplete1] = useState(false);
 
     useEffect(() => {
+        if (isCurrentUserReaction === null) { return; }
         if (isCurrentUserReaction === undefined) { return; }
         if (isCurrentUserReaction.data.length > 0) {
 
-            isCurrentUserReaction.data.forEach((reaction) => {
+            isCurrentUserReaction.data.forEach((reaction: { createdById: string | undefined; }) => {
                 if (reaction.createdById === session?.user.id) {
                     setReact(true);
                 }
@@ -62,41 +68,43 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
     const [formFocus, setFormFocus] = useState(false);
 
     function reactToPost(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-        event.preventDefault();
-        console.log("like")
+        if (session) {
+            event.preventDefault();
+            console.log("like")
 
-        let tempReact = false;
-        isCurrentUserReaction.data.forEach((reaction) => {
-            console.log(reaction.createdById, session?.user.id);
-            if (reaction.createdById === session?.user.id) {
-                tempReact = true;
+            let tempReact = false;
+            isCurrentUserReaction.data.forEach((reaction: { createdById: string; }) => {
+                console.log(reaction.createdById, session?.user.id);
+                if (reaction.createdById === session?.user.id) {
+                    tempReact = true;
+
+                }
+            });
+
+            console.log(tempReact, isCurrentUserReaction.data);
+            if (!tempReact) {
+                tempAddReaction.mutate({ id: post.data?.id ?? "", reaction: "like" });
+                isCurrentUserReaction.refetch().then(() => {
+                    setReact(true);
+                }).catch(console.error);
+                reactions.refetch().then(() => {
+                    setReactionsCount(reactions.data! ?? 0);
+                }).catch(console.error);
 
             }
-        });
+            else {
+                // api.post.reactToPost.useMutation({ id: post.data?.id ?? "", reaction: "unlike" });
 
-        console.log(tempReact, isCurrentUserReaction.data);
-        if (!tempReact) {
-            tempAddReaction.mutate({ id: post.data?.id ?? "", reaction: "like" });
-            isCurrentUserReaction.refetch().then(() => {
-                setReact(true);
-            }).catch(console.error);
-            reactions.refetch().then(() => {
-                setReactionsCount(reactions.data! ?? 0);
-            }).catch(console.error);
+                tempRemoveReaction.mutate({ id: post.data?.id ?? "" });
+                isCurrentUserReaction.refetch().then(() => {
+                    setReact(false);
 
-        }
-        else {
-            // api.post.reactToPost.useMutation({ id: post.data?.id ?? "", reaction: "unlike" });
+                }).catch(console.error);
+                reactions.refetch().then(() => {
+                    setReactionsCount(reactions.data! ?? 0);
+                }).catch(console.error);
 
-            tempRemoveReaction.mutate({ id: post.data?.id ?? "" });
-            isCurrentUserReaction.refetch().then(() => {
-                setReact(false);
-
-            }).catch(console.error);
-            reactions.refetch().then(() => {
-                setReactionsCount(reactions.data! ?? 0);
-            }).catch(console.error);
-
+            }
         }
     }
 
