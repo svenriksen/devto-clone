@@ -64,7 +64,7 @@ export default function Comment({ commentid, userid, preview }: { commentid: str
     }
     else {
         return (
-            <div className='text-sm flex items-start mb-6'>
+            <div className='text-sm flex items-start pb-3'>
                 {(user?.image) ? <Image src={user?.image} alt="" width={1000} height={1000} className='mr-2 w-8 h-auto rounded-full' /> :
                     <div className='mr-2 w-8 h-8 bg-black/10 rounded-full'></div>}
                 <div className='w-full'>

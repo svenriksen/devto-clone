@@ -7,6 +7,7 @@ import Tiptap from './tiptap';
 import { api } from '@/trpc/react';
 import { redirect, usePathname, useRouter } from 'next/navigation';
 import { navigate } from '@/app/actions';
+import { set } from 'zod';
 
 
 export default function CommentBox({ post, subComment }
@@ -20,7 +21,14 @@ export default function CommentBox({ post, subComment }
     const [content, setContent] = React.useState("");
     const [mkdwn, setMkdwn] = React.useState("");
 
+    const [publish, setPublish] = React.useState(false);
+
+
     const postMutation = api.post.createComment.useMutation({
+        onMutate: () => {
+            console.log('mutating');
+            setPublish(true);
+        },
         onSuccess: () => {
             console.log('success');
             // navigate(path.substring(1)).catch(console.error);
@@ -66,8 +74,8 @@ export default function CommentBox({ post, subComment }
             <div className='bg-[var(--background))] w-full'>
                 <Tiptap onchange={() => null} content={content} setContent={setContent} mkdwn={mkdwn} setMkdwn={setMkdwn} className="!h-60 mb-3 !py-3 !px-3 text-sm md:text-base rounded-lg comment" />
                 <div className='flex items-center flex-row'>
-                    <button onClick={(event) => { submitForm(event) }} className='btn !px-4 !py-2 !text-base leading-6 font-medium mr-2 !bg-[rgb(59,73,223)] !text-white hover:!bg-[rgb(47,58,178)] disabled:!bg-[rgb(59,73,223)]/60' disabled={content.length == 0}>
-                        Submit
+                    <button onClick={(event) => { submitForm(event) }} className='btn !px-4 !py-2 !text-base leading-6 font-medium mr-2 !bg-[rgb(59,73,223)] !text-white hover:!bg-[rgb(47,58,178)] disabled:!bg-[rgb(59,73,223)]/60' disabled={content.length == 0 || publish}>
+                        {!publish ? <>Submit</> : <>Submitting...</>}
                     </button>
                     <button className='btn !text-base !px-4 !py-2 leading-6 font-medium !bg-[#d6d6d7] !text-[#3d3d3d] disabled:opacity-60 disabled:!bg-[#d6d6d7] hover:!bg-[#bdbdbd]' disabled={content.length == 0}>
                         Preview
