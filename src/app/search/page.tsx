@@ -4,14 +4,16 @@ import Post from "@/components/post";
 import { api } from "@/trpc/react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
-import React, { FormEvent } from "react";
+import React, { FormEvent, Suspense } from "react";
 import { navigate } from "../actions";
+import Loading from "@/components/loading";
 
 
 export default function Search() {
     const params = useSearchParams();
     console.log(params.get('q'));
     const [isClicked, setIsClicked] = React.useState([true, false, false, false, false, false]);
+
     function handleSearch(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
@@ -35,7 +37,7 @@ export default function Search() {
 
     }
     else {
-        posts = api.post.searchPosts.useQuery({ query: params.get('q') ?? "" }).data;
+        posts = api.post.searchPosts.useSuspenseQuery({ query: params.get('q') ?? "" })[1].data;
     }
 
     return (
@@ -81,13 +83,15 @@ export default function Search() {
                         My posts only
                     </button>
                 </div>
-                <div className="mt-2 md:mt-0">
-                    {posts?.map((post, index) => {
-                        return (
-                            <Post key={index} post={post} user={null} />
-                        )
-                    })}
-                </div>
+                <Suspense fallback={<Loading />}>
+                    <div className="mt-2 md:mt-0">
+                        {posts?.map((post, index) => {
+                            return (
+                                <Post key={index} post={post} user={null} />
+                            )
+                        })}
+                    </div>
+                </Suspense>
             </div>
         </div>
     );
