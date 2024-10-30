@@ -130,7 +130,7 @@ export default function Post({
                     </div>
                 </div>
             </div>
-            <div className="-mt-2 bottom-3">
+            <div className="-mt-2 bottom-3 px-3">
                 <Suspense key={allComments?.length} fallback={<Loading />}>
                     {allComments?.map((comment, index) => {
                         return <div key={index} className="">
@@ -138,6 +138,9 @@ export default function Post({
                         </div>
                     })}
                 </Suspense>
+                <div className="ml-12 my-4">
+                    {allComments?.length && allComments?.length >= 2 ? <Link href={`${user?.id}/${post.id}`} className="font-medium -ml-2 py-2 rounded-lg px-3 hover:bg-[rgba(0,0,0,0.035)]">View all {allComments.length} comments</Link> : null}
+                </div>
             </div>
         </div>
     </div >;
