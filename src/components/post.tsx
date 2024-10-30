@@ -9,7 +9,7 @@ const Comment = dynamic(() => import("@/components/comment"), { ssr: false, load
 
 import Loading from "./loading";
 import dynamic from "next/dynamic";
-import moment from 'moment';
+
 
 export default function Post({
     post,
@@ -80,13 +80,13 @@ export default function Post({
 
     return <div className="mb-4">
         <Suspense key={post.coverImage} fallback={<Loading />}>
-            {(post.coverImage && post.coverImage.length < 32) ? <Image className="object-cover w-full h-32 object-center" style={{ borderTopRightRadius: "0.375rem", borderTopLeftRadius: "0.375rem" }} src={post.coverImage ?? ""} alt="" width={1000} height={1000} />
+            {(post.coverImage && post.coverImage.length > 100) ? <Image className="object-cover w-full h-32 object-center" style={{ borderTopRightRadius: "0.375rem", borderTopLeftRadius: "0.375rem" }} src={post.coverImage ?? ""} alt="" width={1000} height={1000} />
                 : null}
         </Suspense>
-        <div className={"relative hover:cursor-pointer w-100 bg-white border-solid border-[1px] border-black/10" + (post.coverImage === null ? "rounded-lg" : "")} style={{
+        <div className={"relative hover:cursor-pointer w-100 bg-white border-solid border-[1px] border-black/10"} style={(post.coverImage && post.coverImage.length > 100 ? {
             borderBottomRightRadius: "0.75rem",
             borderBottomLeftRadius: "0.75rem",
-        }} >
+        } : { borderRadius: "0.75rem" })} >
 
 
             <div className="relative pb-3 flex flex-row items-start px-3  w-full" onClick={async () => { await navigate(`${user?.id}/${post.id}`) }}>
@@ -98,19 +98,18 @@ export default function Post({
                         <div className="absolute w-8 h-8 -left-10 top-3 rounded-full">
                         </div>
                         <div className="font-medium text-sm">{user?.name}</div>
-                        <div className="text-xs text-[rgb(82,82,82)]">{moment(post.createdAt).format("MMM DD")} ({moment(post.createdAt).fromNow()})</div>
+                        <div className="text-xs text-[rgb(82,82,82)]">{post.createdAt.toUTCString()}</div>
                     </div>
                     <div className="pb-3">
-                        <Link href={`${user?.id}/${post.id}`} className="text-2xl font-bold hover:text-[rgba(47,58,178)]">{post.title}</Link>
+                        <Link prefetch={false} href={`${user?.id}/${post.id}`} className="text-2xl font-bold hover:text-[rgba(47,58,178)]">{post.title}</Link>
                     </div>
-                    {post.tags.length > 0 ? <div className="pb-4 -ml-2">
+                    <div className="pb-4 -ml-2">
                         {post.tags.map((tag, index) => {
-                            return <Link href={"/"} key={index} className="text-sm btn !px-2 !py-1 border-[1px] border-transparent !bg-white hover:!bg-[rgba(59,73,223)]/25 hover:border-[rgba(59,73,223)] hover:border-[1px] hover:border-solid transition duration-300">
+                            return <Link prefetch={false} href={"/"} key={index} className="text-sm btn !px-2 !py-1 border-[1px] border-transparent !bg-white hover:!bg-[rgba(59,73,223)]/25 hover:border-[rgba(59,73,223)] hover:border-[1px] hover:border-solid transition duration-300">
                                 <span className="text-[rgba(59,73,223)]">#</span>{tag}
                             </Link>
                         })}
-                    </div> : null}
-
+                    </div>
                     <div className="pb-4 -ml-2 flex items-center w-full justify-between" >
                         <div className="flex items-center">
                             <Link href={"/"} className="flex items-center hover:bg-slate-100/50 px-2 py-1 w-fit rounded">

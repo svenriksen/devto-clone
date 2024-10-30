@@ -46,7 +46,7 @@ export default function Comment({ commentid, userid, preview }: { commentid: str
 
                 <div className='rounded-lg bg-[--background] w-full grow p-4 pb-1'>
                     <div className='max-w-full w-full flex flex-row itemts-center'>
-                        <Link href={"/" + user?.id} className='text-black/80 mb-1 font-medium mr-2'>{user?.name}</Link>
+                        <Link prefetch={false} href={"/" + user?.id} className='text-black/80 mb-1 font-medium mr-2'>{user?.name}</Link>
                         <h2 className='text-sm text-[#717171]'>{moment(comment?.createdAt).fromNow()}</h2>
                     </div>
                     <div className='object-contain w-auto'>
@@ -71,7 +71,7 @@ export default function Comment({ commentid, userid, preview }: { commentid: str
                     <div className='w-full bg-white rounded-lg border-[1px] border-black/10 border-solid'>
                         <div className='flex flex-row justify-between'>
                             <div className='flex flex-row items-center'>
-                                <Link href={"/" + user?.id} className='my-2 pt-2 px-3 text-base font-medium'>{user?.name}</Link>
+                                <Link prefetch={false} href={"/" + user?.id} className='my-2 pt-2 px-3 text-base font-medium'>{user?.name}</Link>
                                 <span className="text-black/30 pt-2 px-2 text-xl md:pl-0 align-middle self-center" role="presentation">•</span>
                                 <h2 className='text-sm pt-2 text-[#717171]'>{moment(comment?.createdAt).format("DD/MM/YYYY")}</h2>
                             </div>

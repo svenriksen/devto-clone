@@ -157,7 +157,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
 
                         <div className="pt-8 px-12 relative md:px-16">
 
-                            <Link href={`/${user?.id}`} className="py-3 relative">
+                            <Link prefetch={false} href={`/${user?.id}`} className="py-3 relative">
                                 <div className="absolute w-8 h-8 -left-10 top-0 rounded-full">
                                     <Image alt="" src={user?.image ?? ""} width={1000} height={1000} onLoadingComplete={() => setComplete1(true)} className={(complete1 ? " " : "animate-pulse bg-gray-200 blur-md ") + "w-full max-w-screen-xl h-auto rounded-full"} />
                                 </div>
@@ -228,7 +228,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                             <div className="relative px-4 -mt-4">
                                 <div className="flex items-end">
                                     <Image alt="" src={user?.image ?? ""} width={1000} height={1000} className="-top-10 mb-2 mr-3 w-10 h-auto rounded-full" />
-                                    <Link href={"/" + post.data.createdById} className="mb-2 font-bold text-lg">{user?.name}</Link>
+                                    <Link prefetch={false} href={"/" + post.data.createdById} className="mb-2 font-bold text-lg">{user?.name}</Link>
                                 </div>
                             </div>
                             <div className="p-4">

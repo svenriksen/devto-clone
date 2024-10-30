@@ -174,7 +174,7 @@ export default function CreatePost() {
             <form className="max-w-[1380px] mx-auto grid p-0 gap-x-2 grid-cols-[100%] md:grid-cols-[64px_7fr_3fr] grid-rows-[min-content_1fr_min-content] md:gap-x-4 md:px-2 lg:px-4">
                 <div className="flex flex-row justify-between items-center h-14 col-span-2">
                     <div className="flex items-center">
-                        <Link href="/" className="mr-4 hidden md:inline-block">
+                        <Link prefetch={false} href="/" className="mr-4 hidden md:inline-block">
                             <Image src={Icon} alt="" width={0} height={0} style={{ width: "auto", height: "40px" }} />
                         </Link>
                         <div className="font-medium hidden sm:inline-block">Create Post</div>

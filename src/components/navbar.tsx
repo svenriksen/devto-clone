@@ -92,7 +92,7 @@ function Navbar() {
                         }} className={searchResult[1].data.length === 0 || (!focus) ? "hidden " : "" + "hidden md:flex flex-col absolute top-[101%] mt-1 z-[1000] bg-white rounded-[0.375rem] shadow w-full left-0 border-solid border-black/20 border-[1px]"}>
 
                             {searchResult[1].data?.map((post, index) => {
-                                return <Link href={"/" + post.createdById + "/" + post.id} key={index} className="p-2 list-none hover:bg-black/5 hover:cursor-pointer">
+                                return <Link prefetch={false} href={"/" + post.createdById + "/" + post.id} key={index} className="p-2 list-none hover:bg-black/5 hover:cursor-pointer">
 
                                     <p className="text-xs leading-tight text-black/60 font-light">@{post.createdById}</p>
                                     <h1 className="text-base text-[rgb(23,23,23)] font-bold">{post.title}</h1>
