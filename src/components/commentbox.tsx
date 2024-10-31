@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 'use client';
 import React from 'react';
 import Image from 'next/image';
@@ -6,14 +10,13 @@ import { useSession } from 'next-auth/react';
 import Tiptap from './tiptap';
 import { api } from '@/trpc/react';
 import { redirect, usePathname, useRouter } from 'next/navigation';
-import { navigate } from '@/app/actions';
-import { set } from 'zod';
 
 
-export default function CommentBox({ post, subComment }
+export default function CommentBox({ post, subComment, query }
     : {
         post: { id: string },
-        subComment?: boolean
+        subComment?: boolean,
+        query?: any
     }) {
     const router = useRouter();
     const path = usePathname();
@@ -32,8 +35,9 @@ export default function CommentBox({ post, subComment }
         onSuccess: () => {
             console.log('success');
             // navigate(path.substring(1)).catch(console.error);
-            window.location.reload();
-            router.refresh();
+            // window.location.reload();
+            // router.refresh();
+            query?.refetch();
         }
     });
 

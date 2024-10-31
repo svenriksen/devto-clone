@@ -26,7 +26,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
         notFound();
     }
     const user = api.profile.getProfile.useSuspenseQuery(post.data?.createdById ?? "mm")[1].data;
-    const comments = api.post.getPostAllComments.useSuspenseQuery({ id: post.data?.id ?? "", quantity: -1 })[1].data;
+    const comments = api.post.getPostAllComments.useSuspenseQuery({ id: post.data?.id ?? "", quantity: -1 });
     const temp = api.post.deletePosts.useMutation({ onSuccess: () => navigate("/") });
     const reactions = api.post.getPostReactionCount.useQuery({ id: post.data?.id ?? "" });
     let isCurrentUserReaction: any;
@@ -136,7 +136,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="hover:fill-orange-500" role="img" aria-hidden="true">
                                     <path d="M10 3h4a8 8 0 010 16v3.5c-5-2-12-5-12-11.5a8 8 0 018-8zm2 14h2a6 6 0 000-12h-4a6 6 0 00-6 6c0 3.61 2.462 5.966 8 8.48V17z"></path>
                                 </svg>
-                                {comments?.length}
+                                {comments[1].data?.length}
                             </button>
                         </Tooltip>
                         <Tooltip className="!w-fit bg-black/90 text-white text-sm py-1 px-2 rounded-lg" placement="bottom" size="sm" content="Save">
@@ -206,7 +206,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                         }} className="">
 
                             {session?.user ? (formFocus ?
-                                < CommentBox post={{ id: post.data?.id ?? "" }} /> :
+                                < CommentBox post={{ id: post.data?.id ?? "" }} query={comments} /> :
                                 <div className='text-sm pb-3 flex items-start'>
                                     {(session.user.image) ? <Image src={session.user.image} alt="" width={1000} height={1000} className='mr-2 w-8 h-auto rounded-full' /> :
                                         <div className='mr-2 w-8 h-8 bg-black/10 rounded-full'></div>}
@@ -216,7 +216,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                             ) : null}
                         </div>
 
-                        {(comments?.map((comment, index) => {
+                        {(comments[1].data?.map((comment, index) => {
                             return <Comment commentid={comment.id} userid={comment.createdById ?? ""} preview={false} key={index} />;
                         })
                         )}
