@@ -94,7 +94,7 @@ function Navbar() {
                             {searchResult[1].data?.map((post, index) => {
                                 return <Link prefetch={false} href={"/" + post.createdById + "/" + post.id} key={index} className="p-2 list-none hover:bg-black/5 hover:cursor-pointer">
 
-                                    <p className="text-xs leading-tight text-black/60 font-light">@{post.createdById}</p>
+                                    <p className="text-xs leading-tight text-black/60 tracking-wide font-light">@{post.createdById}</p>
                                     <h1 className="text-base text-[rgb(23,23,23)] font-bold">{post.title}</h1>
                                     <p className="text-xs leading-tight text-black/60 font-light">{moment(post.createdAt.toUTCString()).format('MMM DD \'YY').toString()}</p>
                                 </Link>
