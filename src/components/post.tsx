@@ -139,7 +139,7 @@ export default function Post({
                     })}
                 </Suspense>
                 <div className="ml-12 my-4">
-                    {comments && comments >= 2 ? <Link href={`${user?.id}/${post.id}`} className="font-medium -ml-2 py-2 rounded-lg px-3 hover:bg-[rgba(0,0,0,0.035)]">View all {comments} comments</Link> : null}
+                    {comments && comments >= 2 ? <Link href={`${user?.id}/${post.id}#comment-section`} className="font-medium -ml-2 py-2 rounded-lg px-3 hover:bg-[rgba(0,0,0,0.035)]">View all {comments} comments</Link> : null}
                 </div>
             </div>
         </div>

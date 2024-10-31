@@ -194,7 +194,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                             </div>
                         </div>
                     </Suspense>
-                    <div className="mb-4 border-t-[1px] border-solid border-black/10 py-8 px-12 md:px-16">
+                    <div className="mb-4 border-t-[1px] border-solid border-black/10 py-8 px-12 md:px-16" id="comment-section">
                         <div className="mb-6 flex items-center justify-between">
                             <div className="font-bold text-2xl">Top comments { }</div>
                             <button className="rounded-lg leading-6 border-2 border-solid border-[#d6d6d7] hover:bg-[#f9f9f9] py-1 px-3">Subscribe</button>
