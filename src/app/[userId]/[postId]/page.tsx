@@ -132,12 +132,14 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                             </button>
                         </Tooltip>
                         <Tooltip className="!w-fit bg-black/90 text-white text-sm py-1 px-2 rounded-lg" placement="bottom" size="sm" content="Jump to comment">
-                            <button className="rounded-lg">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="hover:fill-orange-500" role="img" aria-hidden="true">
-                                    <path d="M10 3h4a8 8 0 010 16v3.5c-5-2-12-5-12-11.5a8 8 0 018-8zm2 14h2a6 6 0 000-12h-4a6 6 0 00-6 6c0 3.61 2.462 5.966 8 8.48V17z"></path>
-                                </svg>
-                                {comments[1].data?.length}
-                            </button>
+                            <Link href={"#comment-section"}>
+                                <button className="rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" className="hover:fill-orange-500" role="img" aria-hidden="true">
+                                        <path d="M10 3h4a8 8 0 010 16v3.5c-5-2-12-5-12-11.5a8 8 0 018-8zm2 14h2a6 6 0 000-12h-4a6 6 0 00-6 6c0 3.61 2.462 5.966 8 8.48V17z"></path>
+                                    </svg>
+                                    {comments[1].data.length}
+                                </button>
+                            </Link>
                         </Tooltip>
                         <Tooltip className="!w-fit bg-black/90 text-white text-sm py-1 px-2 rounded-lg" placement="bottom" size="sm" content="Save">
                             <button>
@@ -157,7 +159,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
 
                         <div className="pt-8 px-12 relative md:px-16">
 
-                            <Link href={`/${user?.id}`} className="py-3 relative">
+                            <Link prefetch={false} href={`/${user?.id}`} className="py-3 relative">
                                 <div className="absolute w-8 h-8 -left-10 top-0 rounded-full">
                                     <Image alt="" src={user?.image ?? ""} width={1000} height={1000} onLoadingComplete={() => setComplete1(true)} className={(complete1 ? " " : "animate-pulse bg-gray-200 blur-md ") + "w-full max-w-screen-xl h-auto rounded-full"} />
                                 </div>
@@ -194,7 +196,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                             </div>
                         </div>
                     </Suspense>
-                    <div className="mb-4 border-t-[1px] border-solid border-black/10 py-8 px-12 md:px-16">
+                    <div className="mb-4 border-t-[1px] border-solid border-black/10 py-8 px-12 md:px-16" id="comment-section">
                         <div className="mb-6 flex items-center justify-between">
                             <div className="font-bold text-2xl">Top comments { }</div>
                             <button className="rounded-lg leading-6 border-2 border-solid border-[#d6d6d7] hover:bg-[#f9f9f9] py-1 px-3">Subscribe</button>
@@ -217,7 +219,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                         </div>
 
                         {(comments[1].data?.map((comment, index) => {
-                            return <Comment commentid={comment.id} userid={comment.createdById ?? ""} preview={false} key={index} />;
+                            return <Comment commentid={comment.id} userid={comment.createdById ?? ""} preview={false} key={index} query={comments} />;
                         })
                         )}
                     </div>
@@ -228,7 +230,7 @@ function Post({ params }: { params: { userId: string, postId: string } }) {
                             <div className="relative px-4 -mt-4">
                                 <div className="flex items-end">
                                     <Image alt="" src={user?.image ?? ""} width={1000} height={1000} className="-top-10 mb-2 mr-3 w-10 h-auto rounded-full" />
-                                    <Link href={"/" + post.data.createdById} className="mb-2 font-bold text-lg">{user?.name}</Link>
+                                    <Link prefetch={false} href={"/" + post.data.createdById} className="mb-2 font-bold text-lg">{user?.name}</Link>
                                 </div>
                             </div>
                             <div className="p-4">

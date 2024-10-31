@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 'use client';
 
-import { useEditor, EditorContent } from '@tiptap/react';
+import { useEditor, EditorContent, type Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import React from 'react';
@@ -14,7 +14,11 @@ import rehypeSanitize from 'rehype-sanitize'
 import rehypeStringify from 'rehype-stringify'
 
 
+let editor: Editor | null;
+export { editor }
+
 const Tiptap = ({
+
     onchange,
     content,
     setContent,
@@ -30,7 +34,8 @@ const Tiptap = ({
         setMkdwn: React.Dispatch<React.SetStateAction<string>>,
         className?: string
     }) => {
-    const editor = useEditor({
+
+    editor = useEditor({
         enableInputRules: false,
         immediatelyRender: false,
         parseOptions: {
@@ -63,6 +68,7 @@ const Tiptap = ({
                 class: className + ' h-full py-5 px-5 md:py-8 md:px-12 lg:px-16 whitespace-pre-wrap text-base font-mono',
             },
         },
+
         async onUpdate({ editor }) {
             const file = await unified()
                 .use(remarkParse)
@@ -87,12 +93,14 @@ const Tiptap = ({
         }
     });
 
-    if (!editor) {
+    if (editor == null) {
         return null;
     }
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, type: string) => {
-
+        if (editor == null) {
+            return;
+        }
         const { view, state } = editor;
         const { from, to } = view.state.selection;
         const tr = view.state.tr;
@@ -394,5 +402,6 @@ const Tiptap = ({
         );
     }
 }
+
 
 export default Tiptap;

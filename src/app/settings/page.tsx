@@ -115,7 +115,7 @@ export default function Settings() {
                 </div>
                 <form onSubmit={(event) => onSubmit(event)} className=''>
                     {(isClicked[0]) ? <div>
-                        <Link href={session?.user.id ?? ""} className="text-2xl mb-4 md:mb-6 text-[rgb(59,73,223)] md:text-3xl font-bold">@{session?.user.name}</Link>
+                        <Link prefetch={false} href={session?.user.id ?? ""} className="text-2xl mb-4 md:mb-6 text-[rgb(59,73,223)] md:text-3xl font-bold">@{session?.user.name}</Link>
                         <div className='bg-white rounded-lg p-4 md:p-6 mb-4 md:mb-6 grid gap-4 md:gap-6'>
                             <h1 className='font-bold text-lg'>User</h1>
                             <div className='flex flex-col'>

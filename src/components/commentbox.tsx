@@ -10,7 +10,7 @@ import { useSession } from 'next-auth/react';
 import Tiptap from './tiptap';
 import { api } from '@/trpc/react';
 import { redirect, usePathname, useRouter } from 'next/navigation';
-
+import { editor } from './tiptap';
 
 export default function CommentBox({ post, subComment, query }
     : {
@@ -37,7 +37,10 @@ export default function CommentBox({ post, subComment, query }
             // navigate(path.substring(1)).catch(console.error);
             // window.location.reload();
             // router.refresh();
-            query?.refetch();
+            query[1]?.refetch();
+            setPublish(false);
+            setContent("");
+            editor?.commands.clearContent();
         }
     });
 
@@ -45,8 +48,10 @@ export default function CommentBox({ post, subComment, query }
         onSuccess: () => {
             console.log('success');
             // navigate(path.substring(1)).catch(console.error);
-            window.location.reload();
-            router.refresh();
+            query[1]?.refetch();
+            setPublish(false);
+            setContent("");
+            editor?.commands.clearContent();
         }
     });
 
@@ -66,7 +71,7 @@ export default function CommentBox({ post, subComment, query }
         console.log(path.substring(1));
         // window.location.reload();
         // navigate(path.substring(1)).catch(console.error);
-        router.refresh();
+        // router.refresh();
         // redirect(`/${session?.user.id}/${post.id}`);
     }
 
