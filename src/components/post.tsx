@@ -49,6 +49,10 @@ export default function Post({
         // Assuming average reading speed of 200 words per minute
         const wordsPerMinute = 200;
 
+        if (!content) {
+            return 0;
+        }
+
         // Calculate word count of the text content
         const wordCount = content.replace(/<[^>]+>/g, " ").split(/\s+/).length;
 
@@ -98,13 +102,13 @@ export default function Post({
                         <div className="absolute w-8 h-8 -left-10 top-3 rounded-full">
                         </div>
                         <div className="font-medium text-sm">{user?.name}</div>
-                        <div className="text-xs text-[rgb(82,82,82)]">{post.createdAt.toUTCString()}</div>
+                        <div className="text-xs text-[rgb(82,82,82)]">{post.createdAt?.toUTCString()}</div>
                     </div>
                     <div className="pb-3">
                         <Link prefetch={false} href={`${user?.id}/${post.id}`} className="text-2xl font-bold hover:text-[rgba(47,58,178)]">{post.title}</Link>
                     </div>
                     <div className="pb-4 -ml-2">
-                        {post.tags.map((tag, index) => {
+                        {post.tags?.map((tag, index) => {
                             return <Link prefetch={false} href={"/"} key={index} className="text-sm btn !px-2 !py-1 border-[1px] border-transparent !bg-white hover:!bg-[rgba(59,73,223)]/25 hover:border-[rgba(59,73,223)] hover:border-[1px] hover:border-solid transition duration-300">
                                 <span className="text-[rgba(59,73,223)]">#</span>{tag}
                             </Link>

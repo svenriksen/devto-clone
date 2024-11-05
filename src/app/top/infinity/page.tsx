@@ -12,7 +12,7 @@ import dynamic from "next/dynamic";
 import Loading from "@/components/loading";
 
 export default function Home() {
-    const allPosts = api.post.getTopReactionWeek.useSuspenseQuery();
+    const allPosts = api.post.getTopReactionInfinity.useSuspenseQuery();
     const pathName = usePathname();
 
 
@@ -32,17 +32,17 @@ export default function Home() {
         <div className="max-w-[1380px] mx-auto p-0 md:p-2 lg:p-4 grid md:grid-cols-[2fr_5fr] lg:grid-cols-[240px_2fr_1fr] gap-5 text-sm">
             <SideBar nav={false} show={show} setShow={setShow} />
             <div className="">
-                <div className="flex justify-between items-center mb-3">
+                <div className="flex flex-wrap justify-between items-center mb-3">
                     <div className="text-base">
                         <Link href={"/"} className={(checkPath() == "Relevant" ? "font-bold" : "") + " btn leading-loose"}>Relevant</Link>
                         <Link href={"/latest"} className={(checkPath() == "Latest" ? "font-bold" : "") + " btn leading-loose"}>Latest</Link>
                         <Link href={"/top/week"} className={(checkPath() == "Top" ? "font-bold" : "") + " btn leading-loose"}>Top</Link>
                     </div>
                     <div className="text-base">
-                        <Link href={"/top/week"} className={"font-bold btn leading-loose"}>Week</Link>
+                        <Link href={"/top/week"} className={" btn leading-loose"}>Week</Link>
                         <Link href={"/top/month"} className={" btn leading-loose"}>Month</Link>
                         <Link href={"/top/year"} className={" btn leading-loose"}>Year</Link>
-                        <Link href={"/top/infinity"} className={" btn leading-loose"}>Infinity</Link>
+                        <Link href={"/top/infinity"} className={"font-bold btn leading-loose"}>Infinity</Link>
                     </div>
                 </div >
                 <div>

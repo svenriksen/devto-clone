@@ -12,7 +12,7 @@ import dynamic from "next/dynamic";
 import Loading from "@/components/loading";
 
 export default function Home() {
-    const allPosts = api.post.getTopReactionWeek.useSuspenseQuery();
+    const allPosts = api.post.getTopReactionMonth.useSuspenseQuery();
     const pathName = usePathname();
 
 
@@ -39,8 +39,8 @@ export default function Home() {
                         <Link href={"/top/week"} className={(checkPath() == "Top" ? "font-bold" : "") + " btn leading-loose"}>Top</Link>
                     </div>
                     <div className="text-base">
-                        <Link href={"/top/week"} className={"font-bold btn leading-loose"}>Week</Link>
-                        <Link href={"/top/month"} className={" btn leading-loose"}>Month</Link>
+                        <Link href={"/top/week"} className={" btn leading-loose"}>Week</Link>
+                        <Link href={"/top/month"} className={"font-bold btn leading-loose"}>Month</Link>
                         <Link href={"/top/year"} className={" btn leading-loose"}>Year</Link>
                         <Link href={"/top/infinity"} className={" btn leading-loose"}>Infinity</Link>
                     </div>

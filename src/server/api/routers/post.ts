@@ -50,6 +50,144 @@ export const postRouter = createTRPCRouter({
     return post ?? null;
   }),
 
+  getAllLatestPosts: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.post.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  }),
+
+  getTopReactionWeek: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.post.findMany({
+      // orderby reaction count
+      include: {
+        _count: {
+          select: {
+            Comments: {
+              where: {
+                // range query
+                // createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+                createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+
+              },
+            },
+            Reaction: {
+              where: { createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } },
+
+            },
+          },
+        },
+      },
+      orderBy: [
+        {
+          Reaction: {
+            _count: "desc",
+          },
+        },
+        {
+          Comments: {
+            _count: "desc",
+          }
+        },
+      ],
+
+    });
+  }),
+
+  getTopReactionMonth: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.post.findMany({
+      // orderby reaction count
+      include: {
+        _count: {
+          select: {
+            Comments: {
+              where: {
+                createdAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+              },
+            },
+            Reaction: {
+              where: { createdAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } },
+
+            },
+          },
+        },
+      },
+      orderBy: [
+        {
+          Reaction: {
+            _count: "desc",
+          },
+        },
+        {
+          Comments: {
+            _count: "desc",
+          }
+        },
+      ],
+
+    });
+  }),
+
+  getTopReactionYear: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.post.findMany({
+      // orderby reaction count
+      include: {
+        _count: {
+          select: {
+            Comments: {
+              where: {
+                createdAt: { gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) },
+              },
+            },
+            Reaction: {
+              where: { createdAt: { gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) } },
+
+            },
+          },
+        },
+      },
+      orderBy: [
+        {
+          Reaction: {
+            _count: "desc",
+          },
+        },
+        {
+          Comments: {
+            _count: "desc",
+          }
+        },
+      ],
+
+    });
+  }),
+
+  getTopReactionInfinity: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.db.post.findMany({
+      // orderby reaction count
+      include: {
+        _count: {
+          select: {
+            Comments: true,
+            Reaction: true,
+          },
+        },
+      },
+      orderBy: [
+        {
+          Reaction: {
+            _count: "desc",
+          },
+        },
+        {
+          Comments: {
+            _count: "desc",
+          }
+        },
+      ],
+
+    });
+  }),
+
   getSecretMessage: protectedProcedure.query(() => {
     return "you can now see this secret message!";
   }),
